@@ -3,1961 +3,1538 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SPECTER•MIRROR — Alien Halloween Interface</title>
+<title>SPECTER•MIRROR</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Creepster&display=swap');
-
-  :root {
-    --alien-green: #00ff88;
-    --alien-cyan: #00e5ff;
-    --alien-purple: #bf00ff;
-    --alien-red: #ff003c;
-    --alien-orange: #ff6600;
-    --dark: #020408;
-    --panel: rgba(0,255,136,0.05);
-    --border: rgba(0,255,136,0.2);
-    --glow: 0 0 20px rgba(0,255,136,0.4), 0 0 60px rgba(0,255,136,0.1);
-    --glow-cyan: 0 0 20px rgba(0,229,255,0.4), 0 0 60px rgba(0,229,255,0.1);
-    --glow-red: 0 0 20px rgba(255,0,60,0.4), 0 0 60px rgba(255,0,60,0.15);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background: var(--dark);
-    color: var(--alien-green);
-    font-family: 'Share Tech Mono', monospace;
-    min-height: 100vh;
-    overflow-x: hidden;
-    cursor: crosshair;
-  }
-
-  /* Animated grid background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: gridShift 20s linear infinite;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,255,136,0.08) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0,229,255,0.06) 0%, transparent 60%),
-                radial-gradient(ellipse 60% 40% at 20% 80%, rgba(191,0,255,0.06) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  @keyframes gridShift {
-    0% { transform: translate(0,0); }
-    100% { transform: translate(40px, 40px); }
-  }
-
-  /* HEADER */
-  header {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    padding: 20px 20px 10px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .logo {
-    font-family: 'Orbitron', sans-serif;
-    font-size: clamp(1.5rem, 5vw, 3rem);
-    font-weight: 900;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--alien-green);
-    text-shadow: var(--glow);
-    animation: logoFlicker 4s infinite;
-  }
-
-  .logo span { color: var(--alien-cyan); text-shadow: var(--glow-cyan); }
-
-  @keyframes logoFlicker {
-    0%,96%,100% { opacity: 1; }
-    97% { opacity: 0.7; }
-    98% { opacity: 1; }
-    99% { opacity: 0.5; }
-  }
-
-  .subtitle {
-    font-size: 0.7rem;
-    letter-spacing: 0.5em;
-    color: rgba(0,255,136,0.5);
-    margin-top: 4px;
-    text-transform: uppercase;
-  }
-
-  /* STATUS BAR */
-  .status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 6px 20px;
-    background: rgba(0,255,136,0.03);
-    border-bottom: 1px solid var(--border);
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: rgba(0,255,136,0.6);
-    position: relative;
-    z-index: 10;
-    flex-wrap: wrap;
-    gap: 5px;
-  }
-
-  .status-dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--alien-green);
-    margin-right: 6px;
-    animation: pulse 1.5s infinite;
-  }
-
-  @keyframes pulse {
-    0%,100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.3; transform: scale(0.8); }
-  }
-
-  /* MAIN LAYOUT */
-  .main {
-    display: grid;
-    grid-template-columns: 220px 1fr 220px;
-    gap: 0;
-    min-height: calc(100vh - 110px);
-    position: relative;
-    z-index: 5;
-  }
-
-  /* SIDE PANELS */
-  .side-panel {
-    border-right: 1px solid var(--border);
-    padding: 15px 12px;
-    background: var(--panel);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    overflow-y: auto;
-  }
-
-  .side-panel.right { border-right: none; border-left: 1px solid var(--border); }
-
-  .panel-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.3em;
-    color: var(--alien-cyan);
-    text-transform: uppercase;
-    text-shadow: var(--glow-cyan);
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(0,229,255,0.2);
-  }
-
-  /* EFFECT BUTTONS */
-  .effects-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-
-  .effect-btn {
-    background: rgba(0,255,136,0.04);
-    border: 1px solid rgba(0,255,136,0.2);
-    color: var(--alien-green);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    padding: 10px 6px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-    text-transform: uppercase;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    border-radius: 2px;
-  }
-
-  .effect-btn .icon { font-size: 1.5rem; line-height: 1; }
-
-  .effect-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, transparent 40%, rgba(0,255,136,0.08) 100%);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .effect-btn:hover, .effect-btn.active {
-    border-color: var(--alien-green);
-    box-shadow: var(--glow), inset 0 0 15px rgba(0,255,136,0.05);
-    color: #fff;
-    background: rgba(0,255,136,0.1);
-  }
-
-  .effect-btn:hover::before, .effect-btn.active::before { opacity: 1; }
-
-  .effect-btn.active {
-    border-color: var(--alien-cyan);
-    color: var(--alien-cyan);
-    box-shadow: var(--glow-cyan);
-  }
-
-  /* category colors */
-  .effect-btn[data-cat="danger"]:hover, .effect-btn[data-cat="danger"].active {
-    border-color: var(--alien-red);
-    color: var(--alien-red);
-    box-shadow: var(--glow-red);
-  }
-  .effect-btn[data-cat="magic"]:hover, .effect-btn[data-cat="magic"].active {
-    border-color: var(--alien-purple);
-    color: #d966ff;
-    box-shadow: 0 0 20px rgba(191,0,255,0.4);
-  }
-  .effect-btn[data-cat="alien"]:hover, .effect-btn[data-cat="alien"].active {
-    border-color: var(--alien-cyan);
-    color: var(--alien-cyan);
-    box-shadow: var(--glow-cyan);
-  }
-  .effect-btn[data-cat="orange"]:hover, .effect-btn[data-cat="orange"].active {
-    border-color: var(--alien-orange);
-    color: var(--alien-orange);
-    box-shadow: 0 0 20px rgba(255,102,0,0.4);
-  }
-
-  /* CENTER MIRROR */
-  .mirror-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 20px;
-    gap: 15px;
-  }
-
-  .mirror-container {
-    position: relative;
-    width: 100%;
-    max-width: 560px;
-    aspect-ratio: 4/3;
-  }
-
-  /* Alien frame */
-  .mirror-frame {
-    position: absolute;
-    inset: -3px;
-    border: 2px solid var(--alien-green);
-    box-shadow: var(--glow), inset var(--glow);
-    z-index: 20;
-    pointer-events: none;
-  }
-
-  .mirror-frame::before, .mirror-frame::after {
-    content: '';
-    position: absolute;
-    inset: -8px;
-    border: 1px solid rgba(0,255,136,0.15);
-  }
-
-  .mirror-frame::after { inset: -16px; border-color: rgba(0,255,136,0.07); }
-
-  /* Corner decorations */
-  .corner {
-    position: absolute;
-    width: 20px; height: 20px;
-    z-index: 21;
-    pointer-events: none;
-  }
-  .corner::before, .corner::after {
-    content: '';
-    position: absolute;
-    background: var(--alien-cyan);
-    box-shadow: 0 0 8px var(--alien-cyan);
-  }
-  .corner::before { width: 100%; height: 2px; top: 0; left: 0; }
-  .corner::after { width: 2px; height: 100%; top: 0; left: 0; }
-  .corner.tl { top: -3px; left: -3px; }
-  .corner.tr { top: -3px; right: -3px; transform: scaleX(-1); }
-  .corner.bl { bottom: -3px; left: -3px; transform: scaleY(-1); }
-  .corner.br { bottom: -3px; right: -3px; transform: scale(-1); }
-
-  video#mirror {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scaleX(-1);
-    display: block;
-  }
-
-  canvas#overlay {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 10;
-  }
-
-  /* Scan line effect */
-  .scanlines {
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,255,136,0.015) 2px,
-      rgba(0,255,136,0.015) 4px
-    );
-    pointer-events: none;
-    z-index: 15;
-    animation: scanMove 8s linear infinite;
-  }
-
-  @keyframes scanMove {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 100%; }
-  }
-
-  /* Moving scan beam */
-  .scan-beam {
-    position: absolute;
-    left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, rgba(0,255,136,0.4), transparent);
-    z-index: 16;
-    pointer-events: none;
-    animation: beamSweep 3s ease-in-out infinite;
-    box-shadow: 0 0 15px rgba(0,255,136,0.3);
-  }
-
-  @keyframes beamSweep {
-    0% { top: -5px; opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { top: calc(100% + 5px); opacity: 0; }
-  }
-
-  /* Permission screen */
-  #permission-screen {
-    position: absolute;
-    inset: 0;
-    background: var(--dark);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    z-index: 30;
-    border: 1px solid var(--border);
-  }
-
-  #permission-screen .cam-icon {
-    font-size: 4rem;
-    animation: camPulse 2s infinite;
-  }
-
-  @keyframes camPulse {
-    0%,100% { filter: drop-shadow(0 0 10px var(--alien-green)); }
-    50% { filter: drop-shadow(0 0 30px var(--alien-green)) drop-shadow(0 0 60px rgba(0,255,136,0.3)); }
-  }
-
-  .start-btn {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 0.3em;
-    padding: 14px 35px;
-    background: transparent;
-    border: 1px solid var(--alien-green);
-    color: var(--alien-green);
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.3s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .start-btn::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0,255,136,0.2), transparent);
-    transition: left 0.4s;
-  }
-
-  .start-btn:hover {
-    box-shadow: var(--glow);
-    background: rgba(0,255,136,0.08);
-  }
-
-  .start-btn:hover::before { left: 100%; }
-
-  /* CONTROLS */
-  .controls-row {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-    max-width: 560px;
-  }
-
-  .ctrl-btn {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.6rem;
-    letter-spacing: 0.2em;
-    padding: 8px 16px;
-    background: transparent;
-    border: 1px solid rgba(0,229,255,0.3);
-    color: var(--alien-cyan);
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all 0.2s;
-  }
-
-  .ctrl-btn:hover {
-    border-color: var(--alien-cyan);
-    box-shadow: var(--glow-cyan);
-    background: rgba(0,229,255,0.08);
-  }
-
-  .ctrl-btn.danger {
-    border-color: rgba(255,0,60,0.3);
-    color: var(--alien-red);
-  }
-
-  .ctrl-btn.danger:hover {
-    border-color: var(--alien-red);
-    box-shadow: var(--glow-red);
-    background: rgba(255,0,60,0.08);
-  }
-
-  /* INTENSITY SLIDER */
-  .intensity-section {
-    width: 100%;
-    max-width: 560px;
-  }
-
-  .intensity-label {
-    font-size: 0.6rem;
-    letter-spacing: 0.3em;
-    color: rgba(0,255,136,0.6);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  input[type=range] {
-    width: 100%;
-    -webkit-appearance: none;
-    height: 2px;
-    background: rgba(0,255,136,0.2);
-    outline: none;
-    cursor: pointer;
-  }
-
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--alien-green);
-    box-shadow: 0 0 10px var(--alien-green);
-    cursor: pointer;
-  }
-
-  /* RIGHT PANEL: Stats / info */
-  .data-block {
-    background: rgba(0,229,255,0.03);
-    border: 1px solid rgba(0,229,255,0.1);
-    padding: 10px;
-    border-radius: 2px;
-  }
-
-  .data-label {
-    font-size: 0.55rem;
-    letter-spacing: 0.2em;
-    color: rgba(0,229,255,0.5);
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .data-value {
-    font-size: 0.85rem;
-    color: var(--alien-cyan);
-    text-shadow: var(--glow-cyan);
-  }
-
-  .data-value.active-name {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.7rem;
-    color: var(--alien-green);
-    text-shadow: var(--glow);
-    min-height: 1.2em;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
-  .hex-display {
-    font-size: 0.6rem;
-    color: rgba(0,255,136,0.4);
-    line-height: 1.8;
-    overflow: hidden;
-    height: 90px;
-    word-break: break-all;
-  }
-
-  .bar-meter {
-    margin-top: 5px;
-  }
-
-  .bar-track {
-    height: 3px;
-    background: rgba(0,255,136,0.1);
-    margin-bottom: 4px;
-    position: relative;
-  }
-
-  .bar-fill {
-    height: 100%;
-    background: var(--alien-green);
-    box-shadow: 0 0 6px var(--alien-green);
-    transition: width 0.3s;
-  }
-
-  .bar-label {
-    font-size: 0.5rem;
-    color: rgba(0,255,136,0.5);
-    letter-spacing: 0.15em;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 2px;
-  }
-
-  /* Mobile */
-  @media (max-width: 900px) {
-    .main {
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto auto;
-    }
-    .side-panel {
-      border-right: none;
-      border-bottom: 1px solid var(--border);
-    }
-    .side-panel.right {
-      border-left: none;
-      border-top: 1px solid var(--border);
-    }
-    .effects-grid { grid-template-columns: repeat(4, 1fr); }
-  }
-
-  /* Capture flash */
-  @keyframes flashCapture {
-    0% { opacity: 0; }
-    20% { opacity: 1; }
-    100% { opacity: 0; }
-  }
-
-  .flash-overlay {
-    position: fixed;
-    inset: 0;
-    background: white;
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0;
-  }
-
-  .flash-overlay.flash { animation: flashCapture 0.5s ease; }
-
-  /* Active effect glow on mirror */
-  .mirror-container.has-effect .mirror-frame {
-    animation: frameGlow 2s ease-in-out infinite;
-  }
-
-  @keyframes frameGlow {
-    0%,100% { box-shadow: var(--glow), inset var(--glow); }
-    50% { box-shadow: 0 0 40px rgba(0,255,136,0.6), 0 0 80px rgba(0,255,136,0.2), inset 0 0 30px rgba(0,255,136,0.08); }
-  }
-
-  .loading-indicator {
-    font-size: 0.6rem;
-    letter-spacing: 0.3em;
-    color: var(--alien-orange);
-    text-align: center;
-    animation: loadBlink 0.7s infinite;
-    display: none;
-  }
-
-  .loading-indicator.visible { display: block; }
-
-  @keyframes loadBlink {
-    0%,100% { opacity: 1; }
-    50% { opacity: 0.2; }
-  }
-
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Bebas+Neue&family=Rajdhani:wght@300;600;700&display=swap');
+
+:root {
+  --neon: #00ff88;
+  --cyan: #00e5ff;
+  --purple: #bf00ff;
+  --red: #ff003c;
+  --orange: #ff6600;
+  --gold: #ffd700;
+  --dark: #03060a;
+  --darker: #010204;
+  --panel: rgba(0,255,136,0.04);
+  --border: rgba(0,255,136,0.15);
+  --glow: 0 0 20px rgba(0,255,136,0.5),0 0 60px rgba(0,255,136,0.15);
+  --glow-c: 0 0 20px rgba(0,229,255,0.5),0 0 60px rgba(0,229,255,0.15);
+  --glow-r: 0 0 20px rgba(255,0,60,0.5),0 0 60px rgba(255,0,60,0.15);
+  --glow-gold: 0 0 20px rgba(255,215,0,0.5),0 0 60px rgba(255,215,0,0.15);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html,body{height:100%;overflow:hidden;}
+
+body{
+  background:var(--darker);
+  color:var(--neon);
+  font-family:'Share Tech Mono',monospace;
+  display:flex;
+  flex-direction:column;
+  cursor:crosshair;
+}
+
+/* Animated cosmic grid */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(0,255,136,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,136,0.025) 1px,transparent 1px);
+  background-size:50px 50px;
+  animation:gridDrift 25s linear infinite;
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -10%,rgba(0,255,136,0.07) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 100%,rgba(0,229,255,0.05) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 40% at 10% 80%,rgba(191,0,255,0.05) 0%,transparent 60%);
+  pointer-events:none;z-index:0;
+}
+@keyframes gridDrift{0%{transform:translate(0,0);}100%{transform:translate(50px,50px);}}
+
+/* HEADER */
+header{
+  position:relative;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 18px;
+  border-bottom:1px solid var(--border);
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(10px);
+  flex-shrink:0;
+}
+.logo-wrap{display:flex;flex-direction:column;}
+.logo{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(1rem,3vw,1.8rem);
+  font-weight:900;letter-spacing:0.25em;
+  color:var(--neon);text-shadow:var(--glow);
+  animation:flicker 5s infinite;
+}
+.logo span{color:var(--cyan);text-shadow:var(--glow-c);}
+.logo-sub{font-size:0.55rem;letter-spacing:0.4em;color:rgba(0,255,136,0.4);margin-top:2px;}
+@keyframes flicker{0%,94%,100%{opacity:1;}95%{opacity:.6;}97%{opacity:1;}99%{opacity:.4;}}
+
+.header-stats{display:flex;gap:18px;align-items:center;}
+.hstat{font-size:0.6rem;letter-spacing:0.15em;color:rgba(0,255,136,0.5);text-align:center;}
+.hstat-val{font-family:'Orbitron',sans-serif;font-size:0.75rem;color:var(--cyan);display:block;text-shadow:var(--glow-c);}
+.status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon);animation:blink 1.4s infinite;margin-right:6px;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
+
+/* MAIN LAYOUT */
+.app{
+  display:grid;
+  grid-template-columns:200px 1fr 190px;
+  flex:1;
+  overflow:hidden;
+  position:relative;z-index:5;
+}
+
+/* SIDE PANELS */
+.panel{
+  display:flex;flex-direction:column;gap:0;
+  background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(8px);
+  border-right:1px solid var(--border);
+  overflow:hidden;
+}
+.panel.right{border-right:none;border-left:1px solid var(--border);}
+
+.panel-header{
+  padding:8px 10px;
+  border-bottom:1px solid var(--border);
+  font-family:'Orbitron',sans-serif;
+  font-size:0.55rem;letter-spacing:0.3em;
+  color:var(--cyan);text-shadow:var(--glow-c);
+  text-transform:uppercase;flex-shrink:0;
+}
+
+.scroll-area{
+  overflow-y:auto;
+  flex:1;
+  padding:8px;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(0,255,136,0.3) transparent;
+}
+.scroll-area::-webkit-scrollbar{width:3px;}
+.scroll-area::-webkit-scrollbar-thumb{background:rgba(0,255,136,0.3);border-radius:2px;}
+
+/* CATEGORY LABELS */
+.cat-label{
+  font-size:0.5rem;letter-spacing:0.3em;color:rgba(0,255,136,0.35);
+  text-transform:uppercase;padding:6px 2px 4px;border-top:1px solid rgba(0,255,136,0.08);
+  margin-top:4px;
+}
+.cat-label:first-child{border-top:none;margin-top:0;}
+
+/* EFFECT BUTTONS */
+.efx-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:2px;}
+.efx{
+  background:rgba(0,255,136,0.03);
+  border:1px solid rgba(0,255,136,0.15);
+  color:rgba(0,255,136,0.7);
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.52rem;letter-spacing:0.06em;
+  padding:7px 4px 6px;cursor:pointer;
+  transition:all .18s;text-align:center;
+  text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  position:relative;overflow:hidden;border-radius:2px;
+}
+.efx .ico{font-size:1.3rem;line-height:1;}
+.efx::after{
+  content:'';position:absolute;
+  top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);
+  transition:left .3s;
+}
+.efx:hover::after,.efx.active::after{left:100%;}
+
+.efx:hover,.efx.active{
+  border-color:var(--neon);color:#fff;
+  box-shadow:var(--glow),inset 0 0 12px rgba(0,255,136,0.04);
+  background:rgba(0,255,136,0.08);
+}
+.efx.active{border-color:var(--cyan);color:var(--cyan);box-shadow:var(--glow-c);}
+
+.efx[data-c="red"]:hover,.efx[data-c="red"].active{border-color:var(--red);color:var(--red);box-shadow:var(--glow-r);}
+.efx[data-c="gold"]:hover,.efx[data-c="gold"].active{border-color:var(--gold);color:var(--gold);box-shadow:var(--glow-gold);}
+.efx[data-c="purple"]:hover,.efx[data-c="purple"].active{border-color:var(--purple);color:#d966ff;box-shadow:0 0 20px rgba(191,0,255,.5);}
+.efx[data-c="orange"]:hover,.efx[data-c="orange"].active{border-color:var(--orange);color:var(--orange);box-shadow:0 0 20px rgba(255,102,0,.5);}
+.efx[data-c="blue"]:hover,.efx[data-c="blue"].active{border-color:#3399ff;color:#3399ff;box-shadow:0 0 20px rgba(51,153,255,.5);}
+.efx[data-c="pink"]:hover,.efx[data-c="pink"].active{border-color:#ff66cc;color:#ff66cc;box-shadow:0 0 20px rgba(255,102,204,.5);}
+
+/* CENTER */
+.center{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-start;
+  padding:12px;gap:10px;
+  overflow:hidden;
+}
+
+.mirror-wrap{
+  position:relative;
+  width:100%;flex:1;
+  max-width:680px;min-height:200px;
+}
+
+/* Permission overlay */
+#perm{
+  position:absolute;inset:0;
+  background:rgba(3,6,10,0.97);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:14px;z-index:50;
+  border:1px solid var(--border);
+}
+.perm-icon{font-size:3.5rem;animation:iconPulse 2s infinite;}
+@keyframes iconPulse{0%,100%{filter:drop-shadow(0 0 12px var(--neon));}50%{filter:drop-shadow(0 0 35px var(--neon)) drop-shadow(0 0 70px rgba(0,255,136,.3));}}
+.perm-title{font-family:'Orbitron',sans-serif;font-size:clamp(.8rem,2vw,1.1rem);letter-spacing:.25em;color:var(--neon);text-shadow:var(--glow);text-align:center;}
+.perm-sub{font-size:.62rem;letter-spacing:.2em;color:rgba(0,255,136,.45);text-align:center;line-height:2;max-width:320px;}
+
+/* Permission steps */
+.perm-steps{display:flex;flex-direction:column;gap:8px;max-width:340px;width:100%;}
+.step{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.12);
+  padding:8px 12px;font-size:.58rem;letter-spacing:.1em;color:rgba(0,255,136,.6);
+  border-radius:2px;
+}
+.step-num{
+  font-family:'Orbitron',sans-serif;font-size:.75rem;
+  color:var(--cyan);text-shadow:var(--glow-c);
+  background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,.2);
+  width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;flex-shrink:0;
+}
+
+.start-btn{
+  font-family:'Orbitron',sans-serif;font-size:.75rem;
+  letter-spacing:.3em;padding:13px 32px;
+  background:transparent;border:1px solid var(--neon);
+  color:var(--neon);cursor:pointer;text-transform:uppercase;
+  transition:all .3s;position:relative;overflow:hidden;
+}
+.start-btn::before{
+  content:'';position:absolute;
+  top:0;left:-100%;width:100%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--neon),transparent);
+  animation:scanLine 2s linear infinite;
+}
+@keyframes scanLine{0%{left:-100%;}100%{left:100%;}}
+.start-btn:hover{box-shadow:var(--glow);background:rgba(0,255,136,.08);}
+.start-btn:active{transform:scale(.98);}
+
+.perm-note{font-size:.5rem;color:rgba(0,255,136,.2);letter-spacing:.2em;text-align:center;}
+
+/* Error state */
+#permErr{display:none;color:var(--red);font-size:.6rem;letter-spacing:.15em;text-align:center;padding:8px;border:1px solid rgba(255,0,60,.3);background:rgba(255,0,60,.05);}
+
+/* Mirror frame */
+.frame{
+  position:absolute;inset:-2px;
+  border:1.5px solid var(--neon);
+  box-shadow:var(--glow),inset 0 0 30px rgba(0,255,136,.03);
+  z-index:20;pointer-events:none;
+  transition:border-color .3s,box-shadow .3s;
+}
+.mirror-wrap.has-effect .frame{
+  animation:frameAnim 2s ease-in-out infinite;
+}
+@keyframes frameAnim{
+  0%,100%{box-shadow:var(--glow),inset 0 0 30px rgba(0,255,136,.03);}
+  50%{box-shadow:0 0 40px rgba(0,255,136,.7),0 0 100px rgba(0,255,136,.2),inset 0 0 50px rgba(0,255,136,.06);}
+}
+
+.corner{position:absolute;width:18px;height:18px;z-index:21;pointer-events:none;}
+.corner::before,.corner::after{content:'';position:absolute;background:var(--cyan);box-shadow:0 0 8px var(--cyan);}
+.corner::before{width:100%;height:1.5px;top:0;left:0;}
+.corner::after{width:1.5px;height:100%;top:0;left:0;}
+.corner.tl{top:-2px;left:-2px;}
+.corner.tr{top:-2px;right:-2px;transform:scaleX(-1);}
+.corner.bl{bottom:-2px;left:-2px;transform:scaleY(-1);}
+.corner.br{bottom:-2px;right:-2px;transform:scale(-1);}
+
+/* Scanlines */
+.scanlines{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,136,.012) 2px,rgba(0,255,136,.012) 4px);
+  pointer-events:none;z-index:15;
+}
+.scan-beam{
+  position:absolute;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,rgba(0,255,136,.5),transparent);
+  z-index:16;pointer-events:none;
+  animation:sweep 4s ease-in-out infinite;
+  box-shadow:0 0 12px rgba(0,255,136,.3);
+}
+@keyframes sweep{0%{top:-5px;opacity:0;}5%{opacity:1;}95%{opacity:1;}100%{top:calc(100% + 5px);opacity:0;}}
+
+video#cam{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block;}
+canvas#fx{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10;}
+
+/* CONTROLS */
+.controls{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;width:100%;max-width:680px;}
+.btn{
+  font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.18em;
+  padding:7px 14px;background:transparent;cursor:pointer;text-transform:uppercase;transition:all .2s;
+  border:1px solid rgba(0,229,255,.3);color:var(--cyan);border-radius:1px;
+}
+.btn:hover{border-color:var(--cyan);box-shadow:var(--glow-c);background:rgba(0,229,255,.06);}
+.btn.danger{border-color:rgba(255,0,60,.3);color:var(--red);}
+.btn.danger:hover{border-color:var(--red);box-shadow:var(--glow-r);background:rgba(255,0,60,.06);}
+.btn.gold{border-color:rgba(255,215,0,.3);color:var(--gold);}
+.btn.gold:hover{border-color:var(--gold);box-shadow:var(--glow-gold);background:rgba(255,215,0,.06);}
+
+/* Intensity */
+.intensity-row{display:flex;align-items:center;gap:10px;width:100%;max-width:680px;}
+.int-label{font-size:.55rem;letter-spacing:.2em;color:rgba(0,255,136,.5);white-space:nowrap;}
+input[type=range]{
+  flex:1;-webkit-appearance:none;height:2px;
+  background:rgba(0,255,136,.2);outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:12px;height:12px;border-radius:50%;
+  background:var(--neon);box-shadow:0 0 8px var(--neon);cursor:pointer;
+}
+.int-val{font-family:'Orbitron',sans-serif;font-size:.65rem;color:var(--neon);min-width:36px;text-align:right;}
+
+/* RIGHT PANEL data */
+.data-card{
+  margin:8px 8px 0;
+  background:rgba(0,229,255,.03);
+  border:1px solid rgba(0,229,255,.1);
+  padding:8px;border-radius:2px;
+}
+.dc-label{font-size:.5rem;letter-spacing:.2em;color:rgba(0,229,255,.45);margin-bottom:4px;}
+.dc-val{font-size:.8rem;color:var(--cyan);font-family:'Orbitron',sans-serif;word-break:break-all;}
+.dc-val.name{font-size:.65rem;color:var(--neon);text-shadow:var(--glow);min-height:1em;letter-spacing:.1em;}
+.dc-val.universe{font-size:.58rem;color:rgba(0,229,255,.6);font-family:'Share Tech Mono',monospace;}
+
+.meter-row{display:flex;justify-content:space-between;align-items:center;font-size:.48rem;color:rgba(0,255,136,.45);margin-bottom:2px;}
+.meter-track{height:2px;background:rgba(0,255,136,.1);margin-bottom:5px;}
+.meter-fill{height:100%;transition:width .4s;border-radius:1px;}
+
+.hex-box{font-size:.52rem;color:rgba(0,255,136,.3);line-height:1.9;word-break:break-all;height:80px;overflow:hidden;}
+
+.log-box{
+  padding:8px;font-size:.5rem;line-height:2;
+  color:rgba(0,255,136,.3);overflow-y:auto;flex:1;
+  scrollbar-width:thin;scrollbar-color:rgba(0,255,136,.2) transparent;
+}
+.log-box::-webkit-scrollbar{width:2px;}
+.log-box::-webkit-scrollbar-thumb{background:rgba(0,255,136,.2);}
+.log-entry{color:rgba(0,255,136,.35);}
+.log-entry.event{color:rgba(0,229,255,.5);}
+.log-entry.warn{color:rgba(255,215,0,.5);}
+
+/* Flash */
+.flash{position:fixed;inset:0;background:#fff;pointer-events:none;z-index:9999;opacity:0;}
+@keyframes flashAnim{0%{opacity:0;}20%{opacity:.8;}100%{opacity:0;}}
+
+/* Responsive mobile */
+@media(max-width:800px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto 1fr auto;}
+  .panel,.panel.right{border:none;border-bottom:1px solid var(--border);max-height:180px;}
+  .panel.right{border-top:1px solid var(--border);border-bottom:none;}
+  .efx-grid{grid-template-columns:repeat(5,1fr);}
+}
 </style>
 </head>
 <body>
 
-<div class="flash-overlay" id="flashOverlay"></div>
+<div class="flash" id="flashEl"></div>
 
 <!-- HEADER -->
 <header>
-  <div class="logo">SPECTER<span>•</span>MIRROR</div>
-  <div class="subtitle">Xenomorphic Halloween Interface v4.2.0 — Biometric Overlay System</div>
+  <div class="logo-wrap">
+    <div class="logo">SPECTER<span>•</span>MIRROR <span style="font-size:.5em;color:rgba(0,255,136,.4)">Ω</span></div>
+    <div class="logo-sub"><span class="status-dot"></span>XENOMORPHIC ENTITY INTERFACE v5.0.0 — COSMIC OVERLAY SYSTEM</div>
+  </div>
+  <div class="header-stats">
+    <div class="hstat"><span class="hstat-val" id="hFPS">--</span>FPS</div>
+    <div class="hstat"><span class="hstat-val" id="hEffect">NONE</span>OVERLAY</div>
+    <div class="hstat"><span class="hstat-val" id="hTime">--:--</span>TIME</div>
+  </div>
 </header>
 
-<!-- STATUS BAR -->
-<div class="status-bar">
-  <div><span class="status-dot"></span>SYSTEM ONLINE</div>
-  <div id="statusEffect">OVERLAY: NONE</div>
-  <div id="statusTime">--:--:--</div>
-  <div id="statusFPS">FPS: --</div>
-</div>
+<!-- MAIN APP -->
+<div class="app">
 
-<!-- MAIN -->
-<div class="main">
+  <!-- LEFT PANEL -->
+  <div class="panel">
+    <div class="panel-header">// Entity Selector</div>
+    <div class="scroll-area">
 
-  <!-- LEFT PANEL: Halloween Effects -->
-  <div class="side-panel">
-    <div class="panel-title">// Halloween Entities</div>
-    <div class="effects-grid" id="effectsGrid">
-      <button class="effect-btn" data-effect="wizard" data-cat="magic" onclick="setEffect('wizard')">
-        <span class="icon">🧙</span>WIZARD
-      </button>
-      <button class="effect-btn" data-effect="witch" data-cat="magic" onclick="setEffect('witch')">
-        <span class="icon">🧙‍♀️</span>WITCH
-      </button>
-      <button class="effect-btn" data-effect="pumpkin" data-cat="orange" onclick="setEffect('pumpkin')">
-        <span class="icon">🎃</span>PUMPKIN
-      </button>
-      <button class="effect-btn" data-effect="chucky" data-cat="danger" onclick="setEffect('chucky')">
-        <span class="icon">🪆</span>CHUCKY
-      </button>
-      <button class="effect-btn" data-effect="smiley" data-cat="danger" onclick="setEffect('smiley')">
-        <span class="icon">😀</span>SMILEY
-      </button>
-      <button class="effect-btn" data-effect="joker" data-cat="danger" onclick="setEffect('joker')">
-        <span class="icon">🃏</span>JOKER
-      </button>
-      <button class="effect-btn" data-effect="shrek" data-cat="orange" onclick="setEffect('shrek')">
-        <span class="icon">🧟</span>SHREK
-      </button>
-      <button class="effect-btn" data-effect="skull" data-cat="danger" onclick="setEffect('skull')">
-        <span class="icon">💀</span>SKULL
-      </button>
-    </div>
-    <div class="panel-title" style="margin-top:5px">// Alien Entities</div>
-    <div class="effects-grid">
-      <button class="effect-btn" data-effect="alien" data-cat="alien" onclick="setEffect('alien')">
-        <span class="icon">👽</span>XENOMORPH
-      </button>
-      <button class="effect-btn" data-effect="predator" data-cat="alien" onclick="setEffect('predator')">
-        <span class="icon">🦂</span>PREDATOR
-      </button>
-      <button class="effect-btn" data-effect="cyborg" data-cat="alien" onclick="setEffect('cyborg')">
-        <span class="icon">🤖</span>CYBORG
-      </button>
-      <button class="effect-btn" data-effect="demon" data-cat="danger" onclick="setEffect('demon')">
-        <span class="icon">😈</span>DEMON
-      </button>
-      <button class="effect-btn" data-effect="zombie" data-cat="danger" onclick="setEffect('zombie')">
-        <span class="icon">🧟</span>ZOMBIE
-      </button>
-    </div>
-    <div class="intensity-section">
-      <div class="intensity-label">
-        <span>// EFFECT INTENSITY</span>
-        <span id="intensityVal">75%</span>
+      <div class="cat-label">⬡ Halloween</div>
+      <div class="efx-grid">
+        <button class="efx" data-c="purple" data-e="wizard" onclick="setFX('wizard')"><span class="ico">🧙</span>WIZARD</button>
+        <button class="efx" data-c="purple" data-e="witch" onclick="setFX('witch')"><span class="ico">🧙‍♀️</span>WITCH</button>
+        <button class="efx" data-c="orange" data-e="pumpkin" onclick="setFX('pumpkin')"><span class="ico">🎃</span>PUMPKIN</button>
+        <button class="efx" data-c="red" data-e="chucky" onclick="setFX('chucky')"><span class="ico">🪆</span>CHUCKY</button>
+        <button class="efx" data-c="red" data-e="joker" onclick="setFX('joker')"><span class="ico">🃏</span>JOKER</button>
+        <button class="efx" data-c="red" data-e="skull" onclick="setFX('skull')"><span class="ico">💀</span>SKULL</button>
+        <button class="efx" data-c="red" data-e="demon" onclick="setFX('demon')"><span class="ico">😈</span>DEMON</button>
+        <button class="efx" data-c="orange" data-e="zombie" onclick="setFX('zombie')"><span class="ico">🧟</span>ZOMBIE</button>
       </div>
-      <input type="range" id="intensitySlider" min="10" max="100" value="75" oninput="updateIntensity(this.value)">
+
+      <div class="cat-label">⬡ Alien Tech</div>
+      <div class="efx-grid">
+        <button class="efx" data-c="cyan" data-e="alien" onclick="setFX('alien')"><span class="ico">👽</span>XENOMORPH</button>
+        <button class="efx" data-c="cyan" data-e="predator" onclick="setFX('predator')"><span class="ico">🦂</span>PREDATOR</button>
+        <button class="efx" data-c="cyan" data-e="cyborg" onclick="setFX('cyborg')"><span class="ico">🤖</span>CYBORG</button>
+      </div>
+
+      <div class="cat-label">⬡ Attack on Titan</div>
+      <div class="efx-grid">
+        <button class="efx" data-c="gold" data-e="eren" onclick="setFX('eren')"><span class="ico">⚔️</span>EREN</button>
+        <button class="efx" data-c="pink" data-e="mikasa" onclick="setFX('mikasa')"><span class="ico">🗡️</span>MIKASA</button>
+        <button class="efx" data-c="red" data-e="colossal" onclick="setFX('colossal')"><span class="ico">🔥</span>COLOSSAL</button>
+        <button class="efx" data-c="orange" data-e="armored" onclick="setFX('armored')"><span class="ico">🛡️</span>ARMORED</button>
+        <button class="efx" data-c="gold" data-e="warhammer" onclick="setFX('warhammer')"><span class="ico">🔨</span>WAR HAMMER</button>
+        <button class="efx" data-c="purple" data-e="jaw" onclick="setFX('jaw')"><span class="ico">🦷</span>JAW TITAN</button>
+      </div>
+
+      <div class="cat-label">⬡ Anime Universe</div>
+      <div class="efx-grid">
+        <button class="efx" data-c="blue" data-e="luffy" onclick="setFX('luffy')"><span class="ico">🏴‍☠️</span>LUFFY</button>
+        <button class="efx" data-c="gold" data-e="goku" onclick="setFX('goku')"><span class="ico">✨</span>GOKU SSJ</button>
+        <button class="efx" data-c="red" data-e="chainsaw" onclick="setFX('chainsaw')"><span class="ico">⛓️</span>CHAINSAW</button>
+      </div>
+
+      <div class="cat-label">⬡ Toon World</div>
+      <div class="efx-grid">
+        <button class="efx" data-c="blue" data-e="sponge" onclick="setFX('sponge')"><span class="ico">🟨</span>SPONGEBOB</button>
+        <button class="efx" data-c="orange" data-e="shrek" onclick="setFX('shrek')"><span class="ico">🧅</span>SHREK</button>
+      </div>
+
     </div>
   </div>
 
   <!-- CENTER: Mirror -->
-  <div class="mirror-center">
-    <div class="mirror-container" id="mirrorContainer">
-      <!-- Alien frame corners -->
-      <div class="corner tl"></div>
-      <div class="corner tr"></div>
-      <div class="corner bl"></div>
-      <div class="corner br"></div>
-      <div class="mirror-frame"></div>
+  <div class="center">
+    <div class="mirror-wrap" id="mwrap">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+      <div class="frame"></div>
       <div class="scanlines"></div>
       <div class="scan-beam"></div>
+      <video id="cam" autoplay muted playsinline></video>
+      <canvas id="fx"></canvas>
 
-      <video id="mirror" autoplay muted playsinline></video>
-      <canvas id="overlay"></canvas>
+      <!-- PERMISSION SCREEN -->
+      <div id="perm">
+        <div class="perm-icon">🛸</div>
+        <div class="perm-title">BIOMETRIC CAMERA LINK</div>
+        <div class="perm-sub">To see yourself in the Specter Mirror and apply cosmic entity overlays, your camera access is required.</div>
 
-      <!-- Permission screen -->
-      <div id="permission-screen">
-        <div class="cam-icon">🛸</div>
-        <div style="font-family:'Orbitron',sans-serif;font-size:0.9rem;letter-spacing:0.2em;text-align:center;color:var(--alien-green);text-shadow:var(--glow);">BIOMETRIC SCANNER</div>
-        <div style="font-size:0.65rem;letter-spacing:0.2em;color:rgba(0,255,136,0.5);text-align:center;max-width:280px;line-height:1.8;">ALIEN INTELLIGENCE DETECTED.<br>INITIALIZE FACIAL ANALYSIS PROTOCOL?</div>
-        <button class="start-btn" onclick="initCamera()">⬡ ACTIVATE SCANNER ⬡</button>
-        <div style="font-size:0.55rem;color:rgba(0,255,136,0.25);letter-spacing:0.2em">CAMERA ACCESS REQUIRED</div>
+        <div class="perm-steps">
+          <div class="step"><div class="step-num">1</div>Click the ACTIVATE button below</div>
+          <div class="step"><div class="step-num">2</div>When your browser asks — click <strong style="color:var(--neon)">"Allow"</strong> to grant camera access</div>
+          <div class="step"><div class="step-num">3</div>Your live face appears — select any entity overlay from the left panel</div>
+        </div>
+
+        <div id="permErr">⚠ CAMERA ACCESS DENIED — Check browser settings &amp; try again</div>
+
+        <button class="start-btn" onclick="initCam()">⬡ ACTIVATE SCANNER ⬡</button>
+        <div class="perm-note">🔒 Camera feed stays local — never uploaded or stored</div>
       </div>
     </div>
 
-    <div class="loading-indicator" id="loadingIndicator">⟳ CALIBRATING FACIAL MESH...</div>
+    <div class="controls">
+      <button class="btn gold" onclick="capture()">📸 CAPTURE</button>
+      <button class="btn" onclick="cycleFX()">⟳ CYCLE</button>
+      <button class="btn" onclick="toggleFlip()">⟲ FLIP</button>
+      <button class="btn danger" onclick="clearFX()">✕ CLEAR</button>
+    </div>
 
-    <div class="controls-row">
-      <button class="ctrl-btn" onclick="capturePhoto()">📸 CAPTURE</button>
-      <button class="ctrl-btn" onclick="cycleEffect()">⟳ CYCLE ENTITY</button>
-      <button class="ctrl-btn danger" onclick="clearEffect()">✕ CLEAR OVERLAY</button>
-      <button class="ctrl-btn" onclick="toggleMirror()">⟲ FLIP</button>
+    <div class="intensity-row">
+      <span class="int-label">INTENSITY</span>
+      <input type="range" id="intSlider" min="10" max="100" value="80" oninput="setIntensity(this.value)">
+      <span class="int-val" id="intVal">80%</span>
     </div>
   </div>
 
-  <!-- RIGHT PANEL: Data / Stats -->
-  <div class="side-panel right">
-    <div class="panel-title">// Entity Analysis</div>
-    <div class="data-block">
-      <div class="data-label">Active Overlay</div>
-      <div class="data-value active-name" id="activeEffectName">-- NONE --</div>
+  <!-- RIGHT PANEL -->
+  <div class="panel right">
+    <div class="panel-header">// Entity Analysis</div>
+    <div class="data-card">
+      <div class="dc-label">ACTIVE ENTITY</div>
+      <div class="dc-val name" id="dcName">-- NONE --</div>
+      <div class="dc-val universe" id="dcUniverse">SELECT AN OVERLAY</div>
     </div>
-    <div class="data-block">
-      <div class="data-label">Biometric Status</div>
-      <div class="data-value" id="bioStatus" style="font-size:0.7rem;color:rgba(0,255,136,0.5)">AWAITING SIGNAL</div>
+    <div class="data-card">
+      <div class="dc-label">POWER METRICS</div>
+      <div class="meter-row"><span>POWER LVL</span><span id="mPow">0%</span></div>
+      <div class="meter-track"><div class="meter-fill" id="mPowF" style="width:0%;background:var(--gold);box-shadow:0 0 5px var(--gold)"></div></div>
+      <div class="meter-row"><span>THREAT</span><span id="mThr">0%</span></div>
+      <div class="meter-track"><div class="meter-fill" id="mThrF" style="width:0%;background:var(--red);box-shadow:0 0 5px var(--red)"></div></div>
+      <div class="meter-row"><span>COSMIC</span><span id="mCos">0%</span></div>
+      <div class="meter-track"><div class="meter-fill" id="mCosF" style="width:0%;background:var(--cyan);box-shadow:0 0 5px var(--cyan)"></div></div>
     </div>
-    <div class="data-block">
-      <div class="data-label">Signal Metrics</div>
-      <div class="bar-meter">
-        <div class="bar-label"><span>THREAT LVL</span><span id="threatVal">0%</span></div>
-        <div class="bar-track"><div class="bar-fill" id="threatBar" style="width:0%;background:var(--alien-red);box-shadow:0 0 6px var(--alien-red)"></div></div>
-        <div class="bar-label"><span>ALIEN DNA</span><span id="alienVal">0%</span></div>
-        <div class="bar-track"><div class="bar-fill" id="alienBar" style="width:0%;background:var(--alien-cyan);box-shadow:0 0 6px var(--alien-cyan)"></div></div>
-        <div class="bar-label"><span>DARK MAGIC</span><span id="magicVal">0%</span></div>
-        <div class="bar-track"><div class="bar-fill" id="magicBar" style="width:0%;background:var(--alien-purple);box-shadow:0 0 6px var(--alien-purple)"></div></div>
-      </div>
+    <div class="data-card">
+      <div class="dc-label">QUANTUM SIG</div>
+      <div class="hex-box" id="hexBox">-- AWAITING LINK --</div>
     </div>
-    <div class="data-block">
-      <div class="data-label">Quantum Signature</div>
-      <div class="hex-display" id="hexDisplay">-- AWAITING LINK --</div>
-    </div>
-    <div class="panel-title" style="margin-top:5px">// Transmission Log</div>
-    <div style="font-size:0.55rem;line-height:1.9;color:rgba(0,255,136,0.35)" id="logPanel">
-      > SYSTEM BOOT...<br>
-      > SPECTER MIRROR v4.2.0<br>
-      > XENOMORPHIC CORE LOADED<br>
-      > AWAITING BIOMETRIC INPUT...<br>
+    <div class="panel-header" style="margin-top:auto">// Transmission Log</div>
+    <div class="log-box" id="logBox">
+      <div class="log-entry">> SPECTER MIRROR Ω BOOT</div>
+      <div class="log-entry">> COSMIC DB LOADED: 21 ENTITIES</div>
+      <div class="log-entry">> AWAITING BIOMETRIC INPUT...</div>
     </div>
   </div>
+
 </div>
 
 <script>
-// ============================
-// SPECTER MIRROR — Core System
-// ============================
+// ================================================================
+// SPECTER MIRROR Ω — Cosmic Entity Overlay Engine v5.0
+// ================================================================
 
-let currentEffect = null;
-let effectIntensity = 0.75;
-let mirrorFlipped = false;
-let faceRect = null;
-let animFrame = null;
-let fpsCount = 0, lastFPSTime = Date.now();
-let effectIndex = -1;
-let hexInterval = null;
-let cameraActive = false;
+const cam = document.getElementById('cam');
+const fx = document.getElementById('fx');
+const ctx = fx.getContext('2d');
 
-const video = document.getElementById('mirror');
-const canvas = document.getElementById('overlay');
-const ctx = canvas.getContext('2d');
+let curFX = null, alpha = 0.8, flipped = false;
+let t = 0, fps = 0, lastFps = Date.now();
+let hexIv = null, camActive = false;
+let fxIndex = -1;
 
-// Effect metadata
-const effects = {
-  wizard: { name: 'ARCANE WIZARD', cat: 'magic', threat: 20, alien: 5, magic: 90 },
-  witch: { name: 'DARK WITCH', cat: 'magic', threat: 35, alien: 10, magic: 95 },
-  pumpkin: { name: 'JACK-O-LANTERN', cat: 'orange', threat: 45, alien: 15, magic: 60 },
-  chucky: { name: 'CHUCKY DOLL', cat: 'danger', threat: 95, alien: 5, magic: 40 },
-  smiley: { name: 'SMILEY FACE', cat: 'danger', threat: 85, alien: 20, magic: 30 },
-  joker: { name: 'THE JOKER', cat: 'danger', threat: 90, alien: 15, magic: 50 },
-  shrek: { name: 'OGRE LORD', cat: 'orange', threat: 30, alien: 25, magic: 20 },
-  skull: { name: 'DEATH SKULL', cat: 'danger', threat: 80, alien: 30, magic: 70 },
-  alien: { name: 'XENOMORPH-X', cat: 'alien', threat: 75, alien: 99, magic: 45 },
-  predator: { name: 'PREDATOR CLASS', cat: 'alien', threat: 88, alien: 95, magic: 30 },
-  cyborg: { name: 'CYBORG UNIT', cat: 'alien', threat: 60, alien: 80, magic: 15 },
-  demon: { name: 'INFERNAL DEMON', cat: 'danger', threat: 99, alien: 40, magic: 100 },
-  zombie: { name: 'UNDEAD ENTITY', cat: 'danger', threat: 70, alien: 20, magic: 55 },
+// Entity database
+const DB = {
+  // HALLOWEEN
+  wizard:   {name:'ARCANE WIZARD',  uni:'Halloween Realm',  pow:60, thr:25, cos:80},
+  witch:    {name:'DARK WITCH',     uni:'Halloween Realm',  pow:55, thr:40, cos:90},
+  pumpkin:  {name:'JACK-O-LANTERN', uni:'Halloween Realm',  pow:40, thr:50, cos:55},
+  chucky:   {name:'CHUCKY DOLL',    uni:'Horror Realm',     pow:70, thr:95, cos:30},
+  joker:    {name:'THE JOKER',      uni:'Gotham City',      pow:75, thr:92, cos:50},
+  skull:    {name:'DEATH SKULL',    uni:'Underworld',       pow:80, thr:85, cos:75},
+  demon:    {name:'INFERNAL DEMON', uni:'Hell Dimension',   pow:95, thr:99, cos:100},
+  zombie:   {name:'UNDEAD ENTITY',  uni:'Necrotic Plane',   pow:45, thr:70, cos:60},
+  // ALIEN
+  alien:    {name:'XENOMORPH-X',    uni:'LV-426 Colony',    pow:88, thr:80, cos:99},
+  predator: {name:'YAUTJA HUNTER',  uni:'Predator World',   pow:92, thr:88, cos:90},
+  cyborg:   {name:'CYBORG UNIT-7',  uni:'Machine Realm',    pow:85, thr:65, cos:95},
+  // AOT
+  eren:     {name:'EREN YEAGER',    uni:'Attack on Titan',  pow:97, thr:98, cos:95},
+  mikasa:   {name:'MIKASA ACKERMAN',uni:'Attack on Titan',  pow:94, thr:90, cos:80},
+  colossal: {name:'COLOSSAL TITAN', uni:'Attack on Titan',  pow:100,thr:99, cos:98},
+  armored:  {name:'ARMORED TITAN',  uni:'Attack on Titan',  pow:96, thr:95, cos:85},
+  warhammer:{name:'WAR HAMMER TITAN',uni:'Attack on Titan', pow:98, thr:97, cos:99},
+  jaw:      {name:'JAW TITAN',      uni:'Attack on Titan',  pow:90, thr:93, cos:88},
+  // ANIME
+  luffy:    {name:'MONKEY D. LUFFY',uni:'One Piece',        pow:99, thr:85, cos:97},
+  goku:     {name:'GOKU SUPER SAIYAN',uni:'Dragon Ball Z',  pow:100,thr:90, cos:100},
+  chainsaw: {name:'DENJI / CHAINSAW MAN',uni:'CSM Universe',pow:93, thr:96, cos:85},
+  // TOON
+  sponge:   {name:'SPONGEBOB',      uni:'Bikini Bottom',    pow:30, thr:10, cos:40},
+  shrek:    {name:'SHREK — OGRE LORD',uni:'Far Far Away',   pow:55, thr:35, cos:25},
 };
 
-const effectKeys = Object.keys(effects);
+const fxKeys = Object.keys(DB);
 
-function addLog(msg) {
-  const log = document.getElementById('logPanel');
-  const time = new Date().toLocaleTimeString('en',{hour12:false});
-  log.innerHTML += `> [${time}] ${msg}<br>`;
-  log.scrollTop = log.scrollHeight;
-  // Keep log short
-  const lines = log.innerHTML.split('<br>');
-  if (lines.length > 20) log.innerHTML = lines.slice(-15).join('<br>');
-}
-
-// Time display
-setInterval(() => {
-  document.getElementById('statusTime').textContent = new Date().toLocaleTimeString('en',{hour12:false});
-}, 1000);
-
-// Hex display animation
-function startHexAnim() {
-  clearInterval(hexInterval);
-  hexInterval = setInterval(() => {
-    const chars = '0123456789ABCDEF';
-    let hex = '';
-    for (let i=0; i<120; i++) hex += chars[Math.floor(Math.random()*chars.length)] + (i%8===7?' ':'');
-    document.getElementById('hexDisplay').textContent = hex;
-  }, 120);
-}
-
-function stopHexAnim() {
-  clearInterval(hexInterval);
-  document.getElementById('hexDisplay').textContent = '-- SIGNAL LOST --';
-}
-
-// Camera init
-async function initCamera() {
+// --- CAMERA ---
+async function initCam() {
+  document.getElementById('permErr').style.display = 'none';
+  log('REQUESTING CAMERA ACCESS...','warn');
   try {
-    addLog('REQUESTING CAMERA ACCESS...');
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode:'user', width:1280, height:720 }, audio:false });
-    video.srcObject = stream;
-    video.onloadedmetadata = () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      document.getElementById('permission-screen').style.display = 'none';
-      cameraActive = true;
-      addLog('CAMERA LINK ESTABLISHED');
-      addLog('FACIAL MESH CALIBRATING...');
-      document.getElementById('bioStatus').textContent = 'LIVE — SCANNING';
-      document.getElementById('bioStatus').style.color = 'var(--alien-green)';
-      startHexAnim();
-      renderLoop();
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:'user',width:{ideal:1280},height:{ideal:720}},
+      audio:false
+    });
+    cam.srcObject = stream;
+    cam.onloadedmetadata = () => {
+      fx.width = cam.videoWidth || 640;
+      fx.height = cam.videoHeight || 480;
+      document.getElementById('perm').style.display = 'none';
+      camActive = true;
+      log('CAMERA LINK ESTABLISHED','event');
+      log('FACIAL MESH ONLINE','event');
+      startHex();
+      loop();
     };
   } catch(e) {
-    addLog('ERROR: CAMERA ACCESS DENIED');
-    document.querySelector('#permission-screen .cam-icon').textContent = '⚠️';
-    document.getElementById('bioStatus').textContent = 'ACCESS DENIED';
+    document.getElementById('permErr').style.display = 'block';
+    log('ERROR: CAMERA DENIED','warn');
   }
 }
 
-function updateIntensity(val) {
-  effectIntensity = val/100;
-  document.getElementById('intensityVal').textContent = val + '%';
+// --- INTENSITY ---
+function setIntensity(v) {
+  alpha = v/100;
+  document.getElementById('intVal').textContent = v+'%';
 }
 
-function setEffect(name) {
-  currentEffect = name;
-  document.querySelectorAll('.effect-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.effect === name);
-  });
-  document.getElementById('activeEffectName').textContent = effects[name]?.name || name.toUpperCase();
-  document.getElementById('statusEffect').textContent = 'OVERLAY: ' + (effects[name]?.name || name.toUpperCase());
-  document.getElementById('mirrorContainer').classList.add('has-effect');
+// --- EFFECT CONTROL ---
+function setFX(name) {
+  curFX = name;
+  fxIndex = fxKeys.indexOf(name);
+  document.querySelectorAll('.efx').forEach(b => b.classList.toggle('active', b.dataset.e === name));
+  const d = DB[name];
+  document.getElementById('dcName').textContent = d.name;
+  document.getElementById('dcUniverse').textContent = d.uni;
+  document.getElementById('hEffect').textContent = name.toUpperCase();
+  document.getElementById('mwrap').classList.add('has-effect');
+  animMeter('mPowF','mPow',d.pow);
+  animMeter('mThrF','mThr',d.thr);
+  animMeter('mCosF','mCos',d.cos);
+  log(`ENTITY: ${d.name} [${d.uni}]`,'event');
+}
 
-  const ef = effects[name];
-  if (ef) {
-    animateMeter('threatBar', 'threatVal', ef.threat);
-    animateMeter('alienBar', 'alienVal', ef.alien);
-    animateMeter('magicBar', 'magicVal', ef.magic);
+function clearFX() {
+  curFX = null;
+  document.querySelectorAll('.efx').forEach(b => b.classList.remove('active'));
+  document.getElementById('dcName').textContent = '-- NONE --';
+  document.getElementById('dcUniverse').textContent = 'SELECT AN OVERLAY';
+  document.getElementById('hEffect').textContent = 'NONE';
+  document.getElementById('mwrap').classList.remove('has-effect');
+  ['mPowF','mThrF','mCosF'].forEach(id => document.getElementById(id).style.width='0%');
+  ['mPow','mThr','mCos'].forEach(id => document.getElementById(id).textContent='0%');
+  if(camActive) ctx.clearRect(0,0,fx.width,fx.height);
+  log('OVERLAY CLEARED');
+}
+
+function cycleFX() {
+  fxIndex = (fxIndex+1) % fxKeys.length;
+  setFX(fxKeys[fxIndex]);
+}
+
+function toggleFlip() {
+  flipped = !flipped;
+  cam.style.transform = flipped ? 'none' : 'scaleX(-1)';
+}
+
+// --- CAPTURE ---
+function capture() {
+  const c2 = document.createElement('canvas');
+  c2.width = fx.width; c2.height = fx.height;
+  const c2x = c2.getContext('2d');
+  if(!flipped){c2x.translate(fx.width,0);c2x.scale(-1,1);}
+  c2x.drawImage(cam,0,0,fx.width,fx.height);
+  if(!flipped) c2x.setTransform(1,0,0,1,0,0);
+  c2x.drawImage(fx,0,0);
+  const fl = document.getElementById('flashEl');
+  fl.style.animation='none';void fl.offsetWidth;fl.style.animation='flashAnim .5s ease';
+  const a2 = document.createElement('a');
+  a2.download = `specter-${Date.now()}.png`;
+  a2.href = c2.toDataURL('image/png');
+  a2.click();
+  log('CAPTURE COMPLETE','event');
+}
+
+// --- HEX ANIM ---
+function startHex() {
+  clearInterval(hexIv);
+  hexIv = setInterval(()=>{
+    const ch='0123456789ABCDEF';
+    let h='';for(let i=0;i<140;i++)h+=ch[Math.random()*16|0]+(i%8===7?' ':'');
+    document.getElementById('hexBox').textContent=h;
+  },100);
+}
+
+// --- LOG ---
+function log(msg,type=''){
+  const lb = document.getElementById('logBox');
+  const ts = new Date().toLocaleTimeString('en',{hour12:false});
+  const d = document.createElement('div');
+  d.className = 'log-entry'+(type?' '+type:'');
+  d.textContent = `> [${ts}] ${msg}`;
+  lb.appendChild(d);
+  lb.scrollTop = lb.scrollHeight;
+  if(lb.children.length>30) lb.removeChild(lb.firstChild);
+}
+
+// --- METERS ---
+function animMeter(barId,valId,target){
+  let cur=0;const step=target/25;
+  const iv=setInterval(()=>{
+    cur=Math.min(cur+step,target);
+    document.getElementById(barId).style.width=cur+'%';
+    document.getElementById(valId).textContent=Math.round(cur)+'%';
+    if(cur>=target)clearInterval(iv);
+  },20);
+}
+
+// --- TIME ---
+setInterval(()=>{
+  document.getElementById('hTime').textContent=new Date().toLocaleTimeString('en',{hour12:false,hour:'2-digit',minute:'2-digit'});
+},1000);
+
+// ================================================================
+// RENDER LOOP
+// ================================================================
+function loop(){
+  fps++;
+  const now=Date.now();
+  if(now-lastFps>1000){
+    document.getElementById('hFPS').textContent=fps;
+    fps=0;lastFps=now;
   }
-  addLog(`ENTITY LOADED: ${effects[name]?.name}`);
-}
+  t+=0.035;
+  ctx.clearRect(0,0,fx.width,fx.height);
+  const W=fx.width,H=fx.height;
+  const cx=W/2,cy=H*0.42;
+  const fw=W*0.44,fh=H*0.58;
 
-function animateMeter(barId, valId, target) {
-  let current = 0;
-  const step = target / 30;
-  const timer = setInterval(() => {
-    current = Math.min(current + step, target);
-    document.getElementById(barId).style.width = current + '%';
-    document.getElementById(valId).textContent = Math.round(current) + '%';
-    if (current >= target) clearInterval(timer);
-  }, 20);
-}
-
-function clearEffect() {
-  currentEffect = null;
-  document.querySelectorAll('.effect-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('activeEffectName').textContent = '-- NONE --';
-  document.getElementById('statusEffect').textContent = 'OVERLAY: NONE';
-  document.getElementById('mirrorContainer').classList.remove('has-effect');
-  ['threatBar','alienBar','magicBar'].forEach(id => document.getElementById(id).style.width = '0%');
-  ['threatVal','alienVal','magicVal'].forEach(id => document.getElementById(id).textContent = '0%');
-  addLog('OVERLAY CLEARED');
-  if (cameraActive) ctx.clearRect(0,0,canvas.width,canvas.height);
-}
-
-function cycleEffect() {
-  effectIndex = (effectIndex + 1) % effectKeys.length;
-  setEffect(effectKeys[effectIndex]);
-}
-
-function toggleMirror() {
-  mirrorFlipped = !mirrorFlipped;
-  video.style.transform = mirrorFlipped ? 'none' : 'scaleX(-1)';
-}
-
-function capturePhoto() {
-  const captureCanvas = document.createElement('canvas');
-  captureCanvas.width = canvas.width;
-  captureCanvas.height = canvas.height;
-  const cCtx = captureCanvas.getContext('2d');
-  if (!mirrorFlipped) { cCtx.translate(canvas.width, 0); cCtx.scale(-1, 1); }
-  cCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
-  if (!mirrorFlipped) { cCtx.setTransform(1,0,0,1,0,0); }
-  cCtx.drawImage(canvas, 0, 0);
-
-  const flash = document.getElementById('flashOverlay');
-  flash.classList.remove('flash');
-  void flash.offsetWidth;
-  flash.classList.add('flash');
-
-  const link = document.createElement('a');
-  link.download = `specter-mirror-${Date.now()}.png`;
-  link.href = captureCanvas.toDataURL('image/png');
-  link.click();
-  addLog('BIOMETRIC CAPTURE COMPLETE');
-}
-
-// ============================
-// RENDER LOOP — Effect Drawing
-// ============================
-
-let t = 0; // time counter
-function renderLoop() {
-  fpsCount++;
-  const now = Date.now();
-  if (now - lastFPSTime > 1000) {
-    document.getElementById('statusFPS').textContent = 'FPS: ' + fpsCount;
-    fpsCount = 0;
-    lastFPSTime = now;
+  if(curFX){
+    switch(curFX){
+      case 'wizard':   drawWizard(cx,cy,fw,fh);break;
+      case 'witch':    drawWitch(cx,cy,fw,fh);break;
+      case 'pumpkin':  drawPumpkin(cx,cy,fw,fh);break;
+      case 'chucky':   drawChucky(cx,cy,fw,fh);break;
+      case 'joker':    drawJoker(cx,cy,fw,fh);break;
+      case 'skull':    drawSkull(cx,cy,fw,fh);break;
+      case 'demon':    drawDemon(cx,cy,fw,fh);break;
+      case 'zombie':   drawZombie(cx,cy,fw,fh);break;
+      case 'alien':    drawAlien(cx,cy,fw,fh);break;
+      case 'predator': drawPredator(cx,cy,fw,fh);break;
+      case 'cyborg':   drawCyborg(cx,cy,fw,fh);break;
+      case 'eren':     drawEren(cx,cy,fw,fh);break;
+      case 'mikasa':   drawMikasa(cx,cy,fw,fh);break;
+      case 'colossal': drawColossal(cx,cy,fw,fh);break;
+      case 'armored':  drawArmored(cx,cy,fw,fh);break;
+      case 'warhammer':drawWarhammer(cx,cy,fw,fh);break;
+      case 'jaw':      drawJaw(cx,cy,fw,fh);break;
+      case 'luffy':    drawLuffy(cx,cy,fw,fh);break;
+      case 'goku':     drawGoku(cx,cy,fw,fh);break;
+      case 'chainsaw': drawChainsaw(cx,cy,fw,fh);break;
+      case 'sponge':   drawSponge(cx,cy,fw,fh);break;
+      case 'shrek':    drawShrek(cx,cy,fw,fh);break;
+    }
   }
+  drawHUD(W,H,cx,cy);
+  requestAnimationFrame(loop);
+}
 
-  t += 0.04;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (currentEffect && canvas.width > 0) {
-    // Simulate face position (centered, reasonable size)
-    const fw = canvas.width * 0.45;
-    const fh = canvas.height * 0.6;
-    const fx = canvas.width * 0.5;
-    const fy = canvas.height * 0.42;
-
-    drawEffect(currentEffect, fx, fy, fw, fh);
+// ================================================================
+// UTILITY HELPERS
+// ================================================================
+function glow(col,blur=15){ctx.shadowBlur=blur;ctx.shadowColor=col;}
+function noGlow(){ctx.shadowBlur=0;}
+function ring(cx,cy,r,col,lw=1.5){
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.stroke();
+}
+function fillEllipse(cx,cy,rx,ry,col,rot=0){
+  ctx.fillStyle=col;ctx.beginPath();
+  ctx.ellipse(cx,cy,rx,ry,rot,0,Math.PI*2);ctx.fill();
+}
+function gradCirc(cx,cy,r,c0,c1){
+  const g=ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+  g.addColorStop(0,c0);g.addColorStop(1,c1);return g;
+}
+function star(cx,cy,or,ir,col,n=5){
+  ctx.fillStyle=col;ctx.beginPath();
+  for(let i=0;i<n*2;i++){
+    const a=(i/n/2)*Math.PI*2-Math.PI/2;
+    const r=i%2===0?or:ir;
+    i===0?ctx.moveTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r):ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);
   }
-
-  // Always draw alien HUD overlay
-  drawHUD();
-
-  animFrame = requestAnimationFrame(renderLoop);
+  ctx.closePath();ctx.fill();
+}
+function triangle(cx,cy,w,h,col){
+  ctx.fillStyle=col;ctx.beginPath();
+  ctx.moveTo(cx,cy-h);ctx.lineTo(cx+w,cy+h);ctx.lineTo(cx-w,cy+h);ctx.closePath();ctx.fill();
+}
+function beam(x1,y1,x2,y2,col,w=2){
+  const g=ctx.createLinearGradient(x1,y1,x2,y2);
+  g.addColorStop(0,col);g.addColorStop(1,'transparent');
+  ctx.strokeStyle=g;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
 }
 
-function drawHUD() {
-  const w = canvas.width, h = canvas.height;
-  const a = effectIntensity;
-
-  // Corner brackets
-  const cs = 40;
-  ctx.strokeStyle = `rgba(0,255,136,${0.5 * a})`;
-  ctx.lineWidth = 2;
-  ctx.shadowBlur = 10;
-  ctx.shadowColor = 'rgba(0,255,136,0.5)';
-
-  const corners = [[0,0,1,1],[w,0,-1,1],[0,h,1,-1],[w,h,-1,-1]];
-  corners.forEach(([x,y,dx,dy]) => {
-    ctx.beginPath();
-    ctx.moveTo(x+dx*cs, y);
-    ctx.lineTo(x, y);
-    ctx.lineTo(x, y+dy*cs);
-    ctx.stroke();
-  });
-
-  // Target crosshair center
-  const cx = w/2, cy = h*0.42;
-  ctx.strokeStyle = `rgba(0,229,255,${0.25 * a})`;
-  ctx.lineWidth = 1;
-  ctx.shadowColor = 'rgba(0,229,255,0.3)';
-  ctx.beginPath(); ctx.moveTo(cx-30,cy); ctx.lineTo(cx+30,cy); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx,cy-30); ctx.lineTo(cx,cy+30); ctx.stroke();
-
-  // Rotating scan circle
-  ctx.strokeStyle = `rgba(0,229,255,${0.15 * a})`;
-  ctx.lineWidth = 1;
-  ctx.shadowBlur = 0;
-  ctx.beginPath();
-  ctx.arc(cx, cy, h*0.25, 0, Math.PI*2);
-  ctx.stroke();
-
-  // Pulsing circle
-  const pr = h*0.25 + Math.sin(t*2)*8;
-  ctx.strokeStyle = `rgba(0,255,136,${0.1 * a * (0.5+0.5*Math.sin(t*2))})`;
-  ctx.beginPath();
-  ctx.arc(cx, cy, pr, 0, Math.PI*2);
-  ctx.stroke();
-
-  ctx.shadowBlur = 0;
-}
-
-// ============================
-// EFFECT DRAWING FUNCTIONS
-// ============================
-
-function drawEffect(name, cx, cy, fw, fh, custom) {
-  const alpha = effectIntensity;
+// HUD overlay
+function drawHUD(W,H,cx,cy){
+  const a=Math.min(alpha,0.9);
   ctx.save();
-
-  switch(name) {
-    case 'wizard': drawWizard(cx, cy, fw, fh, alpha); break;
-    case 'witch': drawWitch(cx, cy, fw, fh, alpha); break;
-    case 'pumpkin': drawPumpkin(cx, cy, fw, fh, alpha); break;
-    case 'chucky': drawChucky(cx, cy, fw, fh, alpha); break;
-    case 'smiley': drawSmiley(cx, cy, fw, fh, alpha); break;
-    case 'joker': drawJoker(cx, cy, fw, fh, alpha); break;
-    case 'shrek': drawShrek(cx, cy, fw, fh, alpha); break;
-    case 'skull': drawSkull(cx, cy, fw, fh, alpha); break;
-    case 'alien': drawAlien(cx, cy, fw, fh, alpha); break;
-    case 'predator': drawPredator(cx, cy, fw, fh, alpha); break;
-    case 'cyborg': drawCyborg(cx, cy, fw, fh, alpha); break;
-    case 'demon': drawDemon(cx, cy, fw, fh, alpha); break;
-    case 'zombie': drawZombie(cx, cy, fw, fh, alpha); break;
-  }
-
-  ctx.restore();
-}
-
-function setGlow(color, blur=15) {
-  ctx.shadowBlur = blur;
-  ctx.shadowColor = color;
-}
-
-// WIZARD — Blue pointed hat + sparkles + stars
-function drawWizard(cx, cy, fw, fh, a) {
-  const s = fw * 0.5;
-  const hatTip = cy - fh*0.6;
-  const hatBase = cy - fh*0.15;
-
-  // Pointed hat
-  ctx.globalAlpha = a;
-  setGlow('rgba(100,0,255,0.8)', 20);
-  const hatGrad = ctx.createLinearGradient(cx-s*0.8, hatBase, cx, hatTip);
-  hatGrad.addColorStop(0, '#1a0066');
-  hatGrad.addColorStop(1, '#6600cc');
-  ctx.fillStyle = hatGrad;
-  ctx.beginPath();
-  ctx.moveTo(cx, hatTip - 20);
-  ctx.lineTo(cx + s*0.8, hatBase);
-  ctx.lineTo(cx - s*0.8, hatBase);
-  ctx.closePath();
-  ctx.fill();
-
-  // Hat brim
-  ctx.fillStyle = '#330099';
-  ctx.beginPath();
-  ctx.ellipse(cx, hatBase, s, s*0.15, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Star band
-  ctx.strokeStyle = '#ffdd00';
-  ctx.lineWidth = 2;
-  setGlow('#ffdd00', 15);
-  for(let i=0; i<6; i++) {
-    const sx = cx - s*0.6 + i*s*0.24;
-    const sy = hatBase - 15;
-    drawStar(sx, sy, 5, 3, '#ffdd00', a);
-  }
-
-  // Floating sparkles
-  for(let i=0; i<8; i++) {
-    const angle = (i/8)*Math.PI*2 + t;
-    const r = s*0.9;
-    const sx = cx + Math.cos(angle)*r;
-    const sy = hatBase - fh*0.3 + Math.sin(angle)*r*0.4;
-    const pulse = 0.5 + 0.5*Math.sin(t*3 + i);
-    drawStar(sx, sy, 6*pulse, 3*pulse, '#aaccff', a*pulse);
-  }
-
-  // Eyes glow
-  const ey = cy + fh*0.05;
-  drawGlowEyes(cx, ey, fw, '#9900ff', a, 'almond');
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
-}
-
-// WITCH — Green skin + black hat + bubbling
-function drawWitch(cx, cy, fw, fh, a) {
-  const s = fw*0.5;
-  const hatBase = cy - fh*0.12;
-
-  ctx.globalAlpha = a;
-
-  // Green face tint
-  const faceGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.45);
-  faceGrad.addColorStop(0, 'rgba(80,180,60,0.45)');
-  faceGrad.addColorStop(1, 'rgba(30,100,20,0)');
-  ctx.fillStyle = faceGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, fw*0.45, fh*0.55, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Black pointy hat
-  setGlow('rgba(100,200,0,0.4)', 15);
-  ctx.fillStyle = '#0d0d0d';
-  ctx.beginPath();
-  ctx.moveTo(cx+5, hatBase - fh*0.6);
-  ctx.lineTo(cx + s*0.75, hatBase);
-  ctx.lineTo(cx - s*0.75, hatBase);
-  ctx.closePath();
-  ctx.fill();
-
-  // Purple band
-  ctx.fillStyle = '#660099';
-  ctx.fillRect(cx - s*0.75, hatBase - 18, s*1.5, 14);
-
-  // Hat brim wider
-  ctx.fillStyle = '#111';
-  ctx.beginPath();
-  ctx.ellipse(cx, hatBase, s*0.95, s*0.13, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Bubbles floating
-  for(let i=0; i<5; i++) {
-    const bx = cx - s*0.5 + (i/4)*s;
-    const phase = (t*0.8 + i*1.2) % (Math.PI*2);
-    const by = hatBase + 30 + Math.sin(phase)*15;
-    const br = 4 + i*2;
-    ctx.strokeStyle = `rgba(80,255,80,${a*0.6})`;
-    ctx.lineWidth = 1;
-    setGlow('rgba(0,255,0,0.5)', 8);
-    ctx.beginPath();
-    ctx.arc(bx, by, br, 0, Math.PI*2);
-    ctx.stroke();
-  }
-
-  // Glowing green eyes
-  drawGlowEyes(cx, cy + fh*0.06, fw, '#00ff44', a, 'cat');
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
-}
-
-// PUMPKIN — Orange head overlay
-function drawPumpkin(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
-  setGlow('rgba(255,100,0,0.8)', 25);
-
-  // Pumpkin body segments
-  const segments = 5;
-  const pw = fw*0.5;
-  const ph = fh*0.55;
-  for(let i=0; i<segments; i++) {
-    const sx = cx - pw + (i/(segments-1))*pw*2;
-    const sw = pw * 0.5;
-    const grad = ctx.createRadialGradient(sx, cy, 0, sx, cy, sw);
-    grad.addColorStop(0, `rgba(255,140,0,0.65)`);
-    grad.addColorStop(0.7, `rgba(200,70,0,0.45)`);
-    grad.addColorStop(1, 'rgba(100,30,0,0)');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.ellipse(sx, cy, sw, ph, 0, 0, Math.PI*2);
-    ctx.fill();
-  }
-
-  // Stem
-  ctx.fillStyle = 'rgba(50,120,20,0.8)';
-  ctx.fillRect(cx-6, cy - ph - 25, 12, 28);
-  ctx.fillStyle = 'rgba(50,140,20,0.7)';
-  ctx.beginPath();
-  ctx.moveTo(cx, cy - ph - 20);
-  ctx.bezierCurveTo(cx+30, cy-ph-50, cx+50, cy-ph-30, cx+35, cy-ph-10);
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = 'rgba(50,150,20,0.6)';
-  setGlow('rgba(0,200,0,0.3)', 8);
-  ctx.stroke();
-
-  // Triangle eyes
-  setGlow('rgba(255,200,0,0.8)', 15);
-  ctx.fillStyle = `rgba(255,200,0,${a*0.9})`;
-  const ey = cy - fh*0.05;
-  const ex1 = cx - fw*0.18, ex2 = cx + fw*0.18;
-  drawTriangle(ex1, ey, fw*0.1, fw*0.08);
-  drawTriangle(ex2, ey, fw*0.1, fw*0.08);
-
-  // Jagged mouth
-  setGlow('rgba(255,200,0,0.8)', 12);
-  ctx.strokeStyle = `rgba(255,200,0,${a*0.9})`;
-  ctx.lineWidth = 3;
-  const my = cy + fh*0.18;
-  ctx.beginPath();
-  ctx.moveTo(cx - fw*0.22, my);
-  for(let i=0; i<6; i++) {
-    ctx.lineTo(cx - fw*0.22 + i*fw*0.073, my + (i%2===0?0:fw*0.07));
-  }
-  ctx.stroke();
-
-  // Glow from inside
-  const innerGrad = ctx.createRadialGradient(cx, cy+fh*0.05, 0, cx, cy+fh*0.05, fw*0.35);
-  innerGrad.addColorStop(0, `rgba(255,150,0,${a*0.25})`);
-  innerGrad.addColorStop(1, 'transparent');
-  ctx.fillStyle = innerGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy+fh*0.05, fw*0.35, fh*0.35, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
-}
-
-// CHUCKY — Stitches, doll lines, scarred smile
-function drawChucky(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
-
-  // Scar lines on face
-  setGlow('rgba(200,0,0,0.8)', 10);
-  ctx.strokeStyle = `rgba(180,40,0,${a*0.85})`;
-  ctx.lineWidth = 3;
-
-  // Vertical scar
-  ctx.beginPath();
-  ctx.moveTo(cx + fw*0.1, cy - fh*0.3);
-  ctx.bezierCurveTo(cx+fw*0.12, cy, cx+fw*0.08, cy+fh*0.1, cx+fw*0.1, cy+fh*0.25);
-  ctx.stroke();
-
-  // Stitches
-  ctx.strokeStyle = `rgba(220,80,0,${a*0.9})`;
-  ctx.lineWidth = 2;
-  for(let i=0; i<7; i++) {
-    const sy = cy - fh*0.25 + i*(fh*0.5/6);
-    ctx.beginPath();
-    ctx.moveTo(cx + fw*0.05, sy);
-    ctx.lineTo(cx + fw*0.16, sy);
-    ctx.stroke();
-  }
-
-  // Crazed eyes
-  ctx.fillStyle = `rgba(255,50,50,${a*0.9})`;
-  setGlow('rgba(255,0,0,0.9)', 15);
-  [-1,1].forEach(side => {
-    const ex = cx + side*fw*0.18;
-    const ey = cy - fh*0.04;
-    ctx.beginPath();
-    ctx.arc(ex, ey, fw*0.08, 0, Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle = 'rgba(0,0,0,0.9)';
-    ctx.beginPath();
-    ctx.arc(ex+side*2, ey, fw*0.04, 0, Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle = `rgba(255,50,50,${a*0.9})`;
+  // Corner brackets
+  const cs=45;
+  [[0,0,1,1],[W,0,-1,1],[0,H,1,-1],[W,H,-1,-1]].forEach(([x,y,dx,dy])=>{
+    glow('rgba(0,255,136,0.6)',10);
+    ctx.strokeStyle=`rgba(0,255,136,${a*0.6})`;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(x+dx*cs,y);ctx.lineTo(x,y);ctx.lineTo(x,y+dy*cs);ctx.stroke();
   });
-
-  // Deranged smile
-  setGlow('rgba(200,0,0,0.8)', 12);
-  ctx.strokeStyle = `rgba(180,20,0,${a*0.9})`;
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.arc(cx, cy + fh*0.1, fw*0.2, 0.2, Math.PI-0.2);
-  ctx.stroke();
-
-  // Teeth
-  ctx.fillStyle = `rgba(240,230,200,${a*0.8})`;
-  for(let i=0; i<5; i++) {
-    const tx = cx - fw*0.15 + i*fw*0.075;
-    ctx.fillRect(tx, cy + fh*0.1, fw*0.055, fh*0.06);
-  }
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
+  // Target reticle
+  const ry=H*0.42;
+  glow('rgba(0,229,255,0.4)',8);
+  ctx.strokeStyle=`rgba(0,229,255,${a*0.2})`;ctx.lineWidth=1;
+  ctx.setLineDash([4,8]);
+  ctx.beginPath();ctx.moveTo(cx-40,ry);ctx.lineTo(cx+40,ry);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,ry-40);ctx.lineTo(cx,ry+40);ctx.stroke();
+  ctx.setLineDash([]);
+  ring(cx,ry,H*0.26,`rgba(0,229,255,${a*0.12})`);
+  ring(cx,ry,H*0.26+Math.sin(t*2)*5,`rgba(0,229,255,${a*0.06})`);
+  noGlow();ctx.restore();
 }
 
-// SMILEY — Neon yellow acid face
-function drawSmiley(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
+// ================================================================
+// HALLOWEEN EFFECTS
+// ================================================================
 
-  // Yellow face
-  const pulse = 0.85 + 0.15*Math.sin(t*4);
-  setGlow(`rgba(255,220,0,0.7)`, 30);
-  const faceGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.48);
-  faceGrad.addColorStop(0, `rgba(255,230,0,0.55)`);
-  faceGrad.addColorStop(0.7, `rgba(200,170,0,0.35)`);
-  faceGrad.addColorStop(1, 'transparent');
-  ctx.fillStyle = faceGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, fw*0.48, fh*0.55, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Dot eyes
-  ctx.fillStyle = `rgba(0,0,0,${a*0.9})`;
-  setGlow('rgba(0,0,0,0.5)', 5);
-  [-1,1].forEach(side => {
-    ctx.beginPath();
-    ctx.arc(cx + side*fw*0.15, cy - fh*0.05, fw*0.07, 0, Math.PI*2);
-    ctx.fill();
-  });
-
-  // Big grin
-  setGlow('rgba(0,0,0,0.5)', 5);
-  ctx.strokeStyle = `rgba(0,0,0,${a*0.9})`;
-  ctx.lineWidth = fw*0.04;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.arc(cx, cy + fh*0.05, fw*0.22, 0.25, Math.PI - 0.25);
-  ctx.stroke();
-
-  // Acidic drips
-  ctx.fillStyle = `rgba(200,255,0,${a*0.6})`;
-  setGlow('rgba(200,255,0,0.6)', 10);
-  for(let i=0; i<4; i++) {
-    const dx = cx - fw*0.3 + i*fw*0.2;
-    const dlen = (20 + i*12) + Math.sin(t*2+i)*8;
-    ctx.beginPath();
-    ctx.arc(dx, cy + fh*0.5 + dlen, 5, 0, Math.PI*2);
-    ctx.fill();
-    ctx.fillRect(dx-2, cy + fh*0.48, 4, dlen);
+function drawWizard(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  const s=fw*0.5;
+  const hBase=cy-fh*0.15;
+  const hTip=cy-fh*0.7;
+  // Hat
+  glow('rgba(100,0,255,0.8)',20);
+  const hg=ctx.createLinearGradient(cx,hTip,cx,hBase);
+  hg.addColorStop(0,'#4400aa');hg.addColorStop(1,'#220066');
+  ctx.fillStyle=hg;ctx.beginPath();
+  ctx.moveTo(cx+5,hTip-15);ctx.lineTo(cx+s*0.85,hBase);ctx.lineTo(cx-s*0.85,hBase);ctx.closePath();ctx.fill();
+  fillEllipse(cx,hBase,s*0.92,s*0.13,'#330099');
+  // Stars on hat
+  for(let i=0;i<5;i++){const sx=cx-s*0.55+i*s*0.27;star(sx,hBase-20,7,3,'rgba(255,220,80,0.9)');}
+  // Sparkles orbit
+  for(let i=0;i<10;i++){
+    const a2=(i/10)*Math.PI*2+t;const r=s*0.85;
+    const px=cx+Math.cos(a2)*r,py=hBase-fh*0.2+Math.sin(a2)*r*0.3;
+    const p=0.5+0.5*Math.sin(t*3+i);
+    glow('rgba(150,100,255,0.8)',10);
+    star(px,py,5*p,2*p,`rgba(180,120,255,${alpha*p})`);
   }
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
-}
-
-// JOKER — White face, red smile, green hair
-function drawJoker(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
-
-  // White face powder
-  const wGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.48);
-  wGrad.addColorStop(0, 'rgba(255,255,255,0.5)');
-  wGrad.addColorStop(0.8, 'rgba(200,200,200,0.3)');
-  wGrad.addColorStop(1, 'transparent');
-  ctx.fillStyle = wGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, fw*0.48, fh*0.55, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Green hair wisps at top
-  setGlow('rgba(0,180,0,0.6)', 15);
-  ctx.strokeStyle = `rgba(0,200,0,${a*0.8})`;
-  ctx.lineWidth = 4;
-  for(let i=0; i<7; i++) {
-    const hx = cx - fw*0.4 + i*fw*0.133;
-    ctx.beginPath();
-    ctx.moveTo(hx, cy - fh*0.4);
-    ctx.bezierCurveTo(hx + (i-3)*10, cy - fh*0.6 - 20, hx+(i-3)*5, cy-fh*0.7-10, hx+(i-3.5)*20, cy - fh*0.8);
-    ctx.stroke();
-  }
-
-  // Dark eye shadows
-  ctx.fillStyle = `rgba(30,0,30,${a*0.65})`;
-  ctx.shadowBlur = 0;
-  [-1,1].forEach(side => {
-    ctx.beginPath();
-    ctx.ellipse(cx + side*fw*0.17, cy - fh*0.04, fw*0.13, fw*0.1, 0, 0, Math.PI*2);
-    ctx.fill();
-  });
-
-  // Yellow eyes
-  setGlow('rgba(255,200,0,0.9)', 15);
-  ctx.fillStyle = `rgba(255,200,0,${a*0.9})`;
-  [-1,1].forEach(side => {
-    ctx.beginPath();
-    ctx.ellipse(cx + side*fw*0.17, cy - fh*0.04, fw*0.07, fw*0.065, 0, 0, Math.PI*2);
-    ctx.fill();
-  });
-
-  // Red rictus grin — extended past lips
-  setGlow('rgba(255,0,0,0.9)', 20);
-  const griny = cy + fh*0.12;
-  const grinw = fw*0.35;
-
-  ctx.fillStyle = `rgba(200,0,0,${a*0.9})`;
-  ctx.beginPath();
-  ctx.moveTo(cx - grinw, griny);
-  ctx.quadraticCurveTo(cx, griny + fh*0.12, cx + grinw, griny);
-  ctx.quadraticCurveTo(cx, griny - fh*0.04, cx - grinw, griny);
-  ctx.fill();
-
-  // White teeth
-  ctx.fillStyle = `rgba(255,255,255,${a*0.9})`;
-  for(let i=0; i<6; i++) {
-    const tx = cx - grinw*0.7 + i*(grinw*1.4/5);
-    ctx.fillRect(tx, griny - 5, grinw*1.4/5 - 2, 15);
-  }
-
-  // Scar lines extending smile
-  ctx.strokeStyle = `rgba(180,0,0,${a*0.8})`;
-  ctx.lineWidth = 2.5;
-  ctx.lineCap = 'round';
-  ctx.shadowBlur = 8;
-  ctx.shadowColor = 'rgba(255,0,0,0.5)';
-  [-1,1].forEach(side => {
-    ctx.beginPath();
-    ctx.moveTo(cx + side*grinw, griny);
-    ctx.quadraticCurveTo(cx + side*(grinw + fw*0.08), griny - fh*0.05, cx + side*(grinw + fw*0.05), griny - fh*0.1);
-    ctx.stroke();
-  });
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
-}
-
-// SHREK — Green ogre ears, layers
-function drawShrek(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
-
-  // Green face
-  const fGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.5);
-  fGrad.addColorStop(0, 'rgba(100,180,50,0.55)');
-  fGrad.addColorStop(0.6, 'rgba(60,130,30,0.4)');
-  fGrad.addColorStop(1, 'transparent');
-  ctx.fillStyle = fGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, fw*0.5, fh*0.58, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Big round ears / ear nubs
-  setGlow('rgba(100,180,50,0.6)', 15);
-  ctx.fillStyle = `rgba(90,160,40,${a*0.8})`;
-  [-1,1].forEach(side => {
-    // Ear
-    ctx.beginPath();
-    ctx.ellipse(cx + side*(fw*0.42), cy - fh*0.1, fw*0.14, fw*0.18, side*0.3, 0, Math.PI*2);
-    ctx.fill();
-    // Ear inner
-    ctx.fillStyle = `rgba(80,140,30,${a*0.7})`;
-    ctx.beginPath();
-    ctx.ellipse(cx + side*(fw*0.42), cy - fh*0.1, fw*0.07, fw*0.1, side*0.3, 0, Math.PI*2);
-    ctx.fill();
-    ctx.fillStyle = `rgba(90,160,40,${a*0.8})`;
-  });
-
-  // Bulbous nose
-  const nGrad = ctx.createRadialGradient(cx, cy+fh*0.07, 0, cx, cy+fh*0.07, fw*0.15);
-  nGrad.addColorStop(0, `rgba(110,190,55,${a*0.8})`);
-  nGrad.addColorStop(1, `rgba(60,120,25,${a*0.4})`);
-  ctx.fillStyle = nGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy+fh*0.07, fw*0.13, fw*0.1, 0, 0, Math.PI*2);
-  ctx.fill();
-
   // Eyes
-  drawGlowEyes(cx, cy - fh*0.08, fw, '#88ff00', a, 'round');
-
-  // Unibrow
-  ctx.strokeStyle = `rgba(60,100,20,${a*0.85})`;
-  ctx.lineWidth = fw*0.045;
-  ctx.lineCap = 'round';
-  ctx.shadowBlur = 5;
-  ctx.shadowColor = 'rgba(60,100,20,0.5)';
-  ctx.beginPath();
-  ctx.moveTo(cx - fw*0.28, cy - fh*0.15);
-  ctx.quadraticCurveTo(cx, cy - fh*0.2, cx + fw*0.28, cy - fh*0.15);
-  ctx.stroke();
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
+  drawEyePair(cx,cy+fh*0.04,fw,'rgba(160,0,255,0.9)','almond');
+  ctx.globalAlpha=1;noGlow();ctx.restore();
 }
 
-// SKULL — X-Ray bone overlay
-function drawSkull(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
-  setGlow('rgba(200,220,255,0.7)', 20);
+function drawWitch(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  const s=fw*0.5;
+  // Green tint
+  fillEllipse(cx,cy,fw*0.47,fh*0.55,gradCirc(cx,cy,fw*0.47,'rgba(60,200,40,0.45)','transparent'));
+  // Hat
+  glow('rgba(0,180,0,0.5)',15);
+  ctx.fillStyle='#080808';ctx.beginPath();
+  ctx.moveTo(cx+8,cy-fh*0.72);ctx.lineTo(cx+s*0.78,cy-fh*0.15);ctx.lineTo(cx-s*0.78,cy-fh*0.15);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#550088';ctx.fillRect(cx-s*0.78,cy-fh*0.15-16,s*1.56,13);
+  fillEllipse(cx,cy-fh*0.15,s*0.97,s*0.12,'#0d0d0d');
+  // Bubbles
+  for(let i=0;i<5;i++){
+    const bx=cx-s*0.45+i*s*0.22;
+    const by=cy-fh*0.08+Math.sin(t*0.9+i*1.3)%1*20;
+    glow('rgba(0,255,80,0.6)',10);
+    ctx.strokeStyle=`rgba(80,255,80,${alpha*0.7})`;ctx.lineWidth=1.2;
+    ctx.beginPath();ctx.arc(bx,by,4+i*2,0,Math.PI*2);ctx.stroke();
+  }
+  drawEyePair(cx,cy+fh*0.06,fw,'rgba(0,255,60,0.9)','cat');
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
 
-  // Skull glow
-  const sGrad = ctx.createRadialGradient(cx, cy-fh*0.08, 0, cx, cy-fh*0.08, fw*0.47);
-  sGrad.addColorStop(0, 'rgba(180,200,230,0.45)');
-  sGrad.addColorStop(0.7, 'rgba(100,120,160,0.2)');
-  sGrad.addColorStop(1, 'transparent');
-  ctx.fillStyle = sGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy-fh*0.08, fw*0.46, fh*0.52, 0, 0, Math.PI*2);
-  ctx.fill();
+function drawPumpkin(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Segments
+  for(let i=0;i<5;i++){
+    const sx=cx-fw*0.5+(i/4)*fw;const sw=fw*0.48;
+    const g=gradCirc(sx,cy,sw,'rgba(255,140,0,0.6)','rgba(100,30,0,0)');
+    fillEllipse(sx,cy,sw,fh*0.55,g);
+  }
+  // Stem
+  ctx.fillStyle='rgba(40,110,15,0.85)';ctx.fillRect(cx-5,cy-fh*0.55-22,10,25);
+  glow('rgba(255,150,0,0.9)',20);
+  // Tri eyes
+  triangle(cx-fw*0.18,cy-fh*0.07,fw*0.095,fw*0.075,'rgba(255,200,0,0.95)');
+  triangle(cx+fw*0.18,cy-fh*0.07,fw*0.095,fw*0.075,'rgba(255,200,0,0.95)');
+  // Jagged mouth
+  ctx.strokeStyle='rgba(255,200,0,0.95)';ctx.lineWidth=3;ctx.lineCap='round';
+  const my=cy+fh*0.18;ctx.beginPath();ctx.moveTo(cx-fw*0.23,my);
+  for(let i=0;i<7;i++) ctx.lineTo(cx-fw*0.23+i*fw*0.077,my+(i%2===0?0:fw*0.08));
+  ctx.stroke();
+  // Inner glow
+  fillEllipse(cx,cy+fh*0.04,fw*0.32,fh*0.3,gradCirc(cx,cy+fh*0.04,fw*0.32,'rgba(255,130,0,0.25)','transparent'));
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
 
-  // Eye sockets
-  ctx.fillStyle = `rgba(0,0,0,${a*0.88})`;
-  [-1,1].forEach(side => {
-    ctx.beginPath();
-    ctx.ellipse(cx + side*fw*0.16, cy - fh*0.04, fw*0.12, fh*0.12, 0, 0, Math.PI*2);
-    ctx.fill();
-  });
+function drawChucky(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  glow('rgba(200,0,0,0.8)',12);
+  // Scar
+  ctx.strokeStyle=`rgba(180,30,0,${alpha*0.9})`;ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(cx+fw*0.1,cy-fh*0.32);
+  ctx.bezierCurveTo(cx+fw*0.13,cy,cx+fw*0.08,cy+fh*0.12,cx+fw*0.11,cy+fh*0.28);ctx.stroke();
+  // Stitches
+  ctx.strokeStyle=`rgba(220,60,0,${alpha*0.9})`;ctx.lineWidth=2;
+  for(let i=0;i<8;i++){
+    const sy=cy-fh*0.28+i*(fh*0.55/7);
+    ctx.beginPath();ctx.moveTo(cx+fw*0.04,sy);ctx.lineTo(cx+fw*0.18,sy);ctx.stroke();
+  }
+  // Red eyes
+  ctx.fillStyle=`rgba(255,40,40,${alpha*0.95})`;
+  glow('rgba(255,0,0,1)',18);
+  fillEllipse(cx-fw*0.17,cy-fh*0.04,fw*0.085,fw*0.07,'rgba(255,40,40,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.04,fw*0.085,fw*0.07,'rgba(255,40,40,0.95)');
+  ctx.fillStyle='rgba(0,0,0,0.95)';
+  fillEllipse(cx-fw*0.15,cy-fh*0.04,fw*0.042,fw*0.042,'rgba(0,0,0,0.95)');
+  fillEllipse(cx+fw*0.19,cy-fh*0.04,fw*0.042,fw*0.042,'rgba(0,0,0,0.95)');
+  // Teeth grin
+  glow('rgba(200,0,0,0.8)',12);
+  ctx.strokeStyle=`rgba(180,20,0,${alpha*0.9})`;ctx.lineWidth=3;
+  ctx.beginPath();ctx.arc(cx,cy+fh*0.12,fw*0.2,0.2,Math.PI-0.2);ctx.stroke();
+  ctx.fillStyle=`rgba(230,215,190,${alpha*0.85})`;
+  for(let i=0;i<5;i++) ctx.fillRect(cx-fw*0.15+i*fw*0.075,cy+fh*0.12,fw*0.06,fh*0.065);
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
 
-  // Nose cavity
-  ctx.fillStyle = `rgba(0,0,0,${a*0.8})`;
-  ctx.beginPath();
-  ctx.moveTo(cx, cy + fh*0.1);
-  ctx.lineTo(cx - fw*0.05, cy + fh*0.18);
-  ctx.lineTo(cx + fw*0.05, cy + fh*0.18);
-  ctx.closePath();
-  ctx.fill();
-
+function drawJoker(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // White powder
+  fillEllipse(cx,cy,fw*0.49,fh*0.56,gradCirc(cx,cy,fw*0.49,'rgba(255,255,255,0.5)','transparent'));
+  // Green hair
+  glow('rgba(0,200,0,0.7)',15);
+  ctx.strokeStyle=`rgba(0,220,0,${alpha*0.85})`;ctx.lineWidth=4;
+  for(let i=0;i<8;i++){
+    const hx=cx-fw*0.42+i*fw*0.12;
+    ctx.beginPath();ctx.moveTo(hx,cy-fh*0.38);
+    ctx.bezierCurveTo(hx+(i-3.5)*12,cy-fh*0.58-15,hx+(i-3.5)*6,cy-fh*0.7,hx+(i-4)*22,cy-fh*0.82);ctx.stroke();
+  }
+  // Eye shadows
+  ctx.fillStyle=`rgba(25,0,25,${alpha*0.65})`;
+  fillEllipse(cx-fw*0.17,cy-fh*0.04,fw*0.135,fw*0.1,'rgba(25,0,25,0.65)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.04,fw*0.135,fw*0.1,'rgba(25,0,25,0.65)');
+  // Yellow eyes
+  glow('rgba(255,210,0,1)',18);
+  fillEllipse(cx-fw*0.17,cy-fh*0.04,fw*0.072,fw*0.065,'rgba(255,210,0,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.04,fw*0.072,fw*0.065,'rgba(255,210,0,0.95)');
+  // Red grin
+  glow('rgba(255,0,0,1)',22);
+  const gy=cy+fh*0.13,gw=fw*0.36;
+  ctx.fillStyle=`rgba(200,0,0,${alpha*0.95})`;ctx.beginPath();
+  ctx.moveTo(cx-gw,gy);ctx.quadraticCurveTo(cx,gy+fh*0.13,cx+gw,gy);
+  ctx.quadraticCurveTo(cx,gy-fh*0.04,cx-gw,gy);ctx.fill();
   // Teeth
-  ctx.fillStyle = `rgba(180,200,230,${a*0.8})`;
-  ctx.strokeStyle = `rgba(100,120,160,${a*0.5})`;
-  ctx.lineWidth = 1;
-  for(let i=0; i<6; i++) {
-    const tx = cx - fw*0.22 + i*(fw*0.44/5);
-    const th = fh*0.1 - (i===0||i===5?fh*0.03:0);
-    ctx.fillRect(tx, cy + fh*0.22, fw*0.065, th);
-    ctx.strokeRect(tx, cy + fh*0.22, fw*0.065, th);
-  }
-
-  // Cracked lines
-  setGlow('rgba(150,180,230,0.6)', 8);
-  ctx.strokeStyle = `rgba(150,180,230,${a*0.5})`;
-  ctx.lineWidth = 1.5;
-  [[cx-fw*0.1, cy-fh*0.35, cx-fw*0.25, cy-fh*0.45, cx-fw*0.15, cy-fh*0.5],
-   [cx+fw*0.05, cy-fh*0.38, cx+fw*0.2, cy-fh*0.42, cx+fw*0.25, cy-fh*0.35]
-  ].forEach(([x1,y1,x2,y2,x3,y3]) => {
-    ctx.beginPath();
-    ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(x3,y3);
-    ctx.stroke();
+  ctx.fillStyle=`rgba(255,255,255,${alpha*0.95})`;
+  for(let i=0;i<6;i++) ctx.fillRect(cx-gw*0.72+i*gw*0.24,gy-5,gw*0.21,14);
+  // Scar extensions
+  ctx.strokeStyle=`rgba(170,0,0,${alpha*0.85})`;ctx.lineWidth=2.5;ctx.lineCap='round';
+  glow('rgba(200,0,0,0.6)',8);
+  [-1,1].forEach(s=>{
+    ctx.beginPath();ctx.moveTo(cx+s*gw,gy);
+    ctx.quadraticCurveTo(cx+s*(gw+fw*0.09),gy-fh*0.05,cx+s*(gw+fw*0.06),gy-fh*0.11);ctx.stroke();
   });
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
+  ctx.globalAlpha=1;noGlow();ctx.restore();
 }
 
-// ALIEN — Elongated head, huge black eyes, bioluminescence
-function drawAlien(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
-
-  // Elongated alien skull above face
-  const alienGrad = ctx.createRadialGradient(cx, cy - fh*0.2, 0, cx, cy - fh*0.2, fw*0.5);
-  alienGrad.addColorStop(0, 'rgba(0,200,150,0.5)');
-  alienGrad.addColorStop(0.6, 'rgba(0,100,80,0.3)');
-  alienGrad.addColorStop(1, 'transparent');
-  setGlow('rgba(0,255,150,0.8)', 30);
-  ctx.fillStyle = alienGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy - fh*0.18, fw*0.4, fh*0.6, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Veins / neural pathways
-  ctx.strokeStyle = `rgba(0,255,150,${a*0.4})`;
-  ctx.lineWidth = 1.5;
-  for(let i=0; i<5; i++) {
-    const angle = -Math.PI/2 + (i/4)*Math.PI;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy - fh*0.45);
-    ctx.bezierCurveTo(
-      cx + Math.cos(angle)*fw*0.15, cy - fh*0.3,
-      cx + Math.cos(angle)*fw*0.25, cy - fh*0.15,
-      cx + Math.cos(angle)*fw*0.35, cy
-    );
-    ctx.stroke();
-  }
-
-  // Massive black eyes (almond)
-  setGlow('rgba(0,255,200,0.9)', 25);
-  [-1,1].forEach(side => {
-    const ex = cx + side*fw*0.19;
-    const ey = cy - fh*0.02;
-    ctx.fillStyle = `rgba(0,0,0,${a*0.95})`;
-    ctx.beginPath();
-    ctx.ellipse(ex, ey, fw*0.15, fw*0.1, side*0.3, 0, Math.PI*2);
-    ctx.fill();
-    // Blue iris shimmer
-    ctx.fillStyle = `rgba(0,150,255,${a*0.4})`;
-    ctx.beginPath();
-    ctx.ellipse(ex + side*2, ey, fw*0.07, fw*0.045, side*0.3, 0, Math.PI*2);
-    ctx.fill();
-    // Highlight
-    ctx.fillStyle = `rgba(150,255,255,${a*0.3})`;
-    ctx.beginPath();
-    ctx.ellipse(ex + side*fw*0.04, ey - fw*0.03, fw*0.025, fw*0.018, 0, 0, Math.PI*2);
-    ctx.fill();
-  });
-
-  // Tiny slit mouth
-  ctx.strokeStyle = `rgba(0,255,150,${a*0.6})`;
-  ctx.lineWidth = 2;
-  setGlow('rgba(0,255,150,0.5)', 10);
-  ctx.beginPath();
-  ctx.moveTo(cx - fw*0.07, cy + fh*0.18);
-  ctx.lineTo(cx + fw*0.07, cy + fh*0.18);
-  ctx.stroke();
-
-  // Bioluminescent particles orbiting
-  for(let i=0; i<12; i++) {
-    const angle = (i/12)*Math.PI*2 + t*0.7;
-    const r = fw*0.5 + Math.sin(t*2+i)*fw*0.08;
-    const px = cx + Math.cos(angle)*r;
-    const py = cy - fh*0.1 + Math.sin(angle)*fh*0.4;
-    const ps = 2 + Math.sin(t*3+i)*1.5;
-    ctx.fillStyle = `rgba(0,255,150,${a*(0.3+0.4*Math.sin(t*2+i))})`;
-    setGlow('rgba(0,255,150,0.8)', 8);
-    ctx.beginPath();
-    ctx.arc(px, py, ps, 0, Math.PI*2);
-    ctx.fill();
-  }
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
+function drawSkull(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  glow('rgba(200,220,255,0.7)',20);
+  fillEllipse(cx,cy-fh*0.08,fw*0.47,fh*0.53,gradCirc(cx,cy-fh*0.08,fw*0.47,'rgba(180,200,230,0.45)','transparent'));
+  // Eye sockets
+  ctx.fillStyle=`rgba(0,0,0,${alpha*0.92})`;
+  fillEllipse(cx-fw*0.16,cy-fh*0.04,fw*0.13,fh*0.12,'rgba(0,0,0,0.92)');
+  fillEllipse(cx+fw*0.16,cy-fh*0.04,fw*0.13,fh*0.12,'rgba(0,0,0,0.92)');
+  // Nose
+  ctx.fillStyle=`rgba(0,0,0,${alpha*0.85})`;ctx.beginPath();
+  ctx.moveTo(cx,cy+fh*0.1);ctx.lineTo(cx-fw*0.05,cy+fh*0.19);ctx.lineTo(cx+fw*0.05,cy+fh*0.19);ctx.closePath();ctx.fill();
+  // Teeth
+  ctx.fillStyle=`rgba(180,200,230,${alpha*0.85})`;
+  for(let i=0;i<6;i++) ctx.fillRect(cx-fw*0.23+i*fw*0.077,cy+fh*0.22,fw*0.062,fh*0.1-(i===0||i===5?fh*0.03:0));
+  // Cracks
+  ctx.strokeStyle=`rgba(150,180,230,${alpha*0.5})`;ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(cx-fw*0.08,cy-fh*0.36);ctx.lineTo(cx-fw*0.22,cy-fh*0.47);ctx.lineTo(cx-fw*0.14,cy-fh*0.52);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx+fw*0.05,cy-fh*0.38);ctx.lineTo(cx+fw*0.19,cy-fh*0.44);ctx.lineTo(cx+fw*0.24,cy-fh*0.37);ctx.stroke();
+  ctx.globalAlpha=1;noGlow();ctx.restore();
 }
 
-// PREDATOR — Mandibles, thermal vision overlay, dreadlocks
-function drawPredator(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
-
-  // Thermal color overlay
-  const thermalGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.5);
-  thermalGrad.addColorStop(0, 'rgba(255,150,0,0.35)');
-  thermalGrad.addColorStop(0.5, 'rgba(255,50,0,0.2)');
-  thermalGrad.addColorStop(0.8, 'rgba(0,0,200,0.15)');
-  thermalGrad.addColorStop(1, 'transparent');
-  ctx.fillStyle = thermalGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, fw*0.5, fh*0.6, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Dreadlocks
-  ctx.strokeStyle = `rgba(80,50,20,${a*0.8})`;
-  ctx.lineWidth = 5;
-  ctx.lineCap = 'round';
-  for(let i=0; i<8; i++) {
-    const lx = cx - fw*0.45 + i*fw*0.13;
-    const len = fh*0.35 + (i%3)*fh*0.1;
-    ctx.strokeStyle = `rgba(${60+i*10},${40+i*5},20,${a*0.7})`;
-    ctx.beginPath();
-    ctx.moveTo(lx, cy - fh*0.35);
-    ctx.bezierCurveTo(lx + (i-4)*8, cy - fh*0.1, lx+(i-4)*5, cy+fh*0.1, lx+(i-4.5)*12, cy + fh*0.15);
-    ctx.stroke();
-  }
-
-  // Mandibles
-  setGlow('rgba(200,150,0,0.7)', 15);
-  ctx.fillStyle = `rgba(180,120,20,${a*0.85})`;
-  // 4 mandible prongs
-  [[-0.22,-0.15],[-0.08,0.2],[0.08,0.2],[0.22,-0.15]].forEach(([ox,oy],i) => {
-    ctx.beginPath();
-    ctx.ellipse(cx + ox*fw, cy + fh*0.2 + oy*fw, fw*0.04, fw*0.14, (i<2?-0.5:0.5), 0, Math.PI*2);
-    ctx.fill();
-  });
-
-  // Eyes (3 spots - triple dot like Predator)
-  setGlow('rgba(255,50,0,0.9)', 20);
-  ctx.fillStyle = `rgba(255,50,0,${a*0.9})`;
-  [-0.12, 0, 0.12].forEach(off => {
-    ctx.beginPath();
-    ctx.arc(cx + off*fw, cy - fh*0.06, fw*0.04, 0, Math.PI*2);
-    ctx.fill();
-  });
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
-}
-
-// CYBORG — Circuit overlay, laser eye, chrome panel
-function drawCyborg(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
-
-  // Chrome face panel (right half)
-  setGlow('rgba(0,200,255,0.6)', 20);
-  const panelGrad = ctx.createLinearGradient(cx, cy-fh*0.4, cx+fw*0.5, cy+fh*0.4);
-  panelGrad.addColorStop(0, 'rgba(180,200,220,0.45)');
-  panelGrad.addColorStop(0.5, 'rgba(100,130,160,0.3)');
-  panelGrad.addColorStop(1, 'rgba(60,80,100,0.15)');
-  ctx.fillStyle = panelGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx + fw*0.1, cy, fw*0.42, fh*0.55, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Circuit lines
-  ctx.strokeStyle = `rgba(0,200,255,${a*0.6})`;
-  ctx.lineWidth = 1.5;
-  ctx.shadowColor = 'rgba(0,200,255,0.6)';
-  ctx.shadowBlur = 8;
-  const circuits = [
-    [cx+fw*0.05, cy-fh*0.3, cx+fw*0.3, cy-fh*0.3, cx+fw*0.3, cy-fh*0.1, cx+fw*0.45, cy-fh*0.1],
-    [cx+fw*0.15, cy-fh*0.05, cx+fw*0.35, cy-fh*0.05, cx+fw*0.35, cy+fh*0.1],
-    [cx+fw*0.1, cy+fh*0.15, cx+fw*0.4, cy+fh*0.15, cx+fw*0.4, cy+fh*0.3],
-  ];
-  circuits.forEach(pts => {
-    ctx.beginPath();
-    ctx.moveTo(pts[0],pts[1]);
-    for(let i=2; i<pts.length; i+=2) ctx.lineTo(pts[i],pts[i+1]);
-    ctx.stroke();
-    // Node dots
-    ctx.fillStyle = `rgba(0,200,255,${a*0.9})`;
-    for(let i=0; i<pts.length; i+=2) {
-      ctx.beginPath();
-      ctx.arc(pts[i],pts[i+1],3,0,Math.PI*2);
-      ctx.fill();
-    }
-  });
-
-  // Laser eye (right)
-  setGlow('rgba(255,0,100,1)', 25);
-  ctx.fillStyle = `rgba(255,0,100,${a*0.9})`;
-  ctx.beginPath();
-  ctx.arc(cx + fw*0.18, cy - fh*0.04, fw*0.07, 0, Math.PI*2);
-  ctx.fill();
-
-  // Laser beam shooting
-  const laserLen = (fw + canvas.width) * 0.3;
-  const laserGrad = ctx.createLinearGradient(cx + fw*0.18, cy - fh*0.04, cx + fw*0.18 + laserLen, cy - fh*0.04);
-  laserGrad.addColorStop(0, `rgba(255,0,100,${a*0.9})`);
-  laserGrad.addColorStop(1, 'transparent');
-  ctx.fillStyle = laserGrad;
-  ctx.fillRect(cx + fw*0.25, cy - fh*0.055, laserLen, fh*0.03);
-
-  // Normal left eye
-  ctx.fillStyle = `rgba(80,100,130,${a*0.7})`;
-  ctx.shadowBlur = 0;
-  ctx.beginPath();
-  ctx.ellipse(cx - fw*0.17, cy - fh*0.04, fw*0.07, fw*0.06, 0, 0, Math.PI*2);
-  ctx.fill();
-  ctx.fillStyle = 'rgba(0,0,0,0.8)';
-  ctx.beginPath();
-  ctx.arc(cx - fw*0.17, cy - fh*0.04, fw*0.035, 0, Math.PI*2);
-  ctx.fill();
-
-  // Exposed jaw wires
-  setGlow('rgba(0,200,255,0.5)', 8);
-  ctx.strokeStyle = `rgba(0,200,255,${a*0.5})`;
-  ctx.lineWidth = 2;
-  for(let i=0; i<3; i++) {
-    ctx.beginPath();
-    ctx.moveTo(cx + fw*0.1, cy + fh*0.22);
-    ctx.bezierCurveTo(cx + fw*0.2 + i*fw*0.07, cy + fh*0.28, cx + fw*0.35, cy + fh*0.32, cx + fw*0.4, cy + fh*0.25);
-    ctx.stroke();
-  }
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
-}
-
-// DEMON — Red skin, horns, hellfire
-function drawDemon(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
-
-  // Red face aura
-  const auraGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.55);
-  auraGrad.addColorStop(0, 'rgba(220,0,0,0.5)');
-  auraGrad.addColorStop(0.6, 'rgba(150,0,0,0.3)');
-  auraGrad.addColorStop(1, 'transparent');
-  setGlow('rgba(255,0,0,0.8)', 30);
-  ctx.fillStyle = auraGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, fw*0.52, fh*0.6, 0, 0, Math.PI*2);
-  ctx.fill();
-
+function drawDemon(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  fillEllipse(cx,cy,fw*0.52,fh*0.6,gradCirc(cx,cy,fw*0.52,'rgba(220,0,0,0.5)','transparent'));
+  glow('rgba(200,0,0,0.9)',25);
   // Horns
-  ctx.fillStyle = `rgba(80,0,0,${a*0.9})`;
-  setGlow('rgba(200,0,0,0.8)', 15);
-  [-1,1].forEach(side => {
-    const hx = cx + side*fw*0.28;
-    const hy = cy - fh*0.3;
-    ctx.beginPath();
-    ctx.moveTo(hx, hy);
-    ctx.bezierCurveTo(hx + side*fw*0.05, hy - fh*0.25, hx + side*fw*0.08, hy - fh*0.38, hx + side*fw*0.04, hy - fh*0.5);
-    ctx.lineTo(hx + side*fw*0.1, hy);
-    ctx.closePath();
-    ctx.fill();
+  ctx.fillStyle=`rgba(70,0,0,${alpha*0.95})`;
+  [-1,1].forEach(s=>{
+    const hx=cx+s*fw*0.27,hy=cy-fh*0.3;
+    ctx.beginPath();ctx.moveTo(hx,hy);
+    ctx.bezierCurveTo(hx+s*fw*0.06,hy-fh*0.27,hx+s*fw*0.09,hy-fh*0.4,hx+s*fw*0.04,hy-fh*0.52);
+    ctx.lineTo(hx+s*fw*0.11,hy);ctx.closePath();ctx.fill();
   });
-
   // Flame eyes
-  setGlow('rgba(255,150,0,1)', 25);
-  [-1,1].forEach(side => {
-    const ex = cx + side*fw*0.17;
-    const ey = cy - fh*0.02;
-    // Eye base
-    ctx.fillStyle = `rgba(255,80,0,${a*0.9})`;
-    ctx.beginPath();
-    ctx.ellipse(ex, ey, fw*0.1, fw*0.08, 0, 0, Math.PI*2);
-    ctx.fill();
-    // Flame flicker
-    for(let f=0; f<3; f++) {
-      const fy = ey - fw*0.05 - Math.sin(t*5+f*2)*fw*0.04;
-      ctx.fillStyle = `rgba(255,${150+f*30},0,${a*(0.5+Math.sin(t*4+f)*0.3)})`;
-      ctx.beginPath();
-      ctx.ellipse(ex + (f-1)*fw*0.03, fy, fw*0.03, fw*0.06, 0, 0, Math.PI*2);
-      ctx.fill();
+  glow('rgba(255,140,0,1)',25);
+  [-1,1].forEach(s=>{
+    const ex=cx+s*fw*0.17,ey=cy-fh*0.02;
+    fillEllipse(ex,ey,fw*0.1,fw*0.08,'rgba(255,80,0,0.95)');
+    for(let f=0;f<3;f++){
+      const fy2=ey-fw*0.06-Math.sin(t*5+f*2)*fw*0.04;
+      fillEllipse(ex+(f-1)*fw*0.03,fy2,fw*0.028,fw*0.055,`rgba(255,${150+f*30},0,${alpha*(0.5+Math.sin(t*4+f)*0.3)})`);
     }
   });
-
-  // Hellfire rising from bottom
-  for(let i=0; i<10; i++) {
-    const fx = cx - fw*0.45 + i*fw*0.1;
-    const fh2 = (30 + i*8) + Math.sin(t*3+i)*15;
-    const opacity = (0.3 + 0.4*Math.sin(t*2+i)) * a;
-    const flameGrad = ctx.createLinearGradient(fx, cy+fh*0.55, fx, cy+fh*0.55-fh2);
-    flameGrad.addColorStop(0, `rgba(255,50,0,${opacity})`);
-    flameGrad.addColorStop(0.5, `rgba(255,150,0,${opacity*0.6})`);
-    flameGrad.addColorStop(1, 'transparent');
-    ctx.fillStyle = flameGrad;
-    ctx.beginPath();
-    ctx.ellipse(fx, cy+fh*0.55-fh2*0.5, fw*0.04, fh2*0.5, 0, 0, Math.PI*2);
-    ctx.fill();
+  // Hell flames at bottom
+  for(let i=0;i<12;i++){
+    const fx2=cx-fw*0.5+i*fw*0.09;
+    const fl=30+i*6+Math.sin(t*3+i)*14;
+    const fg=ctx.createLinearGradient(fx2,cy+fh*0.55,fx2,cy+fh*0.55-fl);
+    fg.addColorStop(0,`rgba(255,50,0,${alpha*0.7})`);fg.addColorStop(1,'transparent');
+    ctx.fillStyle=fg;
+    fillEllipse(fx2,cy+fh*0.55-fl*0.5,fw*0.035,fl*0.5,fg);
   }
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
+  ctx.globalAlpha=1;noGlow();ctx.restore();
 }
 
-// ZOMBIE — Decomposing face, green rot
-function drawZombie(cx, cy, fw, fh, a) {
-  ctx.globalAlpha = a;
-
-  // Deathly pallor
-  const rGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.5);
-  rGrad.addColorStop(0, 'rgba(80,150,40,0.4)');
-  rGrad.addColorStop(0.5, 'rgba(40,80,20,0.3)');
-  rGrad.addColorStop(1, 'transparent');
-  ctx.fillStyle = rGrad;
-  ctx.beginPath();
-  ctx.ellipse(cx, cy, fw*0.5, fh*0.58, 0, 0, Math.PI*2);
-  ctx.fill();
-
-  // Rot marks / decay patches
-  setGlow('rgba(0,100,0,0.4)', 8);
-  ctx.fillStyle = `rgba(20,60,10,${a*0.5})`;
-  [[cx-fw*0.2, cy-fh*0.15, fw*0.12, fw*0.08],
-   [cx+fw*0.15, cy+fh*0.05, fw*0.1, fw*0.07],
-   [cx-fw*0.05, cy+fh*0.2, fw*0.14, fw*0.06]
-  ].forEach(([rx,ry,rw,rh]) => {
-    ctx.beginPath();
-    ctx.ellipse(rx, ry, rw, rh, Math.random()*0.5, 0, Math.PI*2);
-    ctx.fill();
+function drawZombie(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  fillEllipse(cx,cy,fw*0.5,fh*0.58,gradCirc(cx,cy,fw*0.5,'rgba(70,140,30,0.42)','transparent'));
+  // Decay patches
+  ctx.fillStyle=`rgba(20,55,8,${alpha*0.55})`;
+  [[cx-fw*0.2,cy-fh*0.15,fw*0.12,fw*0.08],[cx+fw*0.16,cy+fh*0.06,fw*0.1,fw*0.07],[cx-fw*0.06,cy+fh*0.2,fw*0.14,fw*0.06]]
+    .forEach(([rx,ry,rw,rh])=>fillEllipse(rx,ry,rw,rh,`rgba(20,55,8,${alpha*0.55})`));
+  // Eyes
+  glow('rgba(0,200,0,0.5)',8);
+  ctx.fillStyle=`rgba(190,225,170,${alpha*0.85})`;
+  fillEllipse(cx-fw*0.17,cy-fh*0.03,fw*0.09,fw*0.065,'rgba(190,225,170,0.85)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.03,fw*0.09,fw*0.065,'rgba(190,225,170,0.85)');
+  // Vein lines
+  ctx.strokeStyle=`rgba(200,0,0,${alpha*0.5})`;ctx.lineWidth=1;
+  [-1,1].forEach((s,i)=>{
+    const ex=cx+s*fw*0.17,ey=cy-fh*0.03;
+    for(let v=0;v<3;v++){const va=v/3*Math.PI*2+s;ctx.beginPath();ctx.moveTo(ex,ey);ctx.lineTo(ex+Math.cos(va)*fw*0.07,ey+Math.sin(va)*fw*0.05);ctx.stroke();}
+    fillEllipse(ex+s,ey+2,fw*0.04,fw*0.035,'rgba(40,0,0,0.95)');
   });
+  // Torn teeth
+  glow('rgba(180,210,140,0.5)',8);
+  ctx.fillStyle=`rgba(170,195,125,${alpha*0.85})`;
+  for(let i=0;i<5;i++){
+    const tx=cx-fw*0.18+i*fw*0.09;
+    ctx.save();ctx.translate(tx,cy+fh*0.21);ctx.rotate((Math.random()*0.4-0.2));
+    ctx.fillRect(-fw*0.03,0,fw*0.055,fh*0.075*(0.7+Math.sin(i)*0.3));ctx.restore();
+  }
+  // Drips
+  ctx.fillStyle=`rgba(0,90,0,${alpha*0.65})`;
+  for(let i=0;i<3;i++){const dx=cx-fw*0.14+i*fw*0.14,dl=fh*0.09+i*fh*0.04+Math.sin(t+i)*fh*0.02;
+    ctx.fillRect(dx-2,cy+fh*0.33,4,dl);
+    fillEllipse(dx,cy+fh*0.33+dl+4,5,5,`rgba(0,90,0,${alpha*0.65})`);
+  }
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
 
-  // Drooping eyes (half closed)
-  [-1,1].forEach(side => {
-    const ex = cx + side*fw*0.17;
-    const ey = cy - fh*0.03;
-    ctx.fillStyle = `rgba(200,230,180,${a*0.8})`;
-    ctx.shadowBlur = 5;
-    ctx.shadowColor = 'rgba(0,200,0,0.4)';
-    ctx.beginPath();
-    ctx.ellipse(ex, ey, fw*0.09, fw*0.065, 0, 0, Math.PI*2);
-    ctx.fill();
-    // Blood shot veins
-    ctx.strokeStyle = `rgba(200,0,0,${a*0.5})`;
-    ctx.lineWidth = 1;
-    for(let v=0; v<3; v++) {
-      const va = v/3*Math.PI*2 + side;
-      ctx.beginPath();
-      ctx.moveTo(ex, ey);
-      ctx.lineTo(ex + Math.cos(va)*fw*0.07, ey + Math.sin(va)*fw*0.05);
-      ctx.stroke();
-    }
-    ctx.fillStyle = 'rgba(50,0,0,0.9)';
-    ctx.shadowBlur = 0;
-    ctx.beginPath();
-    ctx.ellipse(ex+side*1, ey+2, fw*0.04, fw*0.035, 0, 0, Math.PI*2);
-    ctx.fill();
+function drawAlien(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  glow('rgba(0,255,150,0.9)',30);
+  fillEllipse(cx,cy-fh*0.2,fw*0.4,fh*0.62,gradCirc(cx,cy-fh*0.2,fw*0.4,'rgba(0,200,150,0.5)','transparent'));
+  // Neural veins
+  ctx.strokeStyle=`rgba(0,255,150,${alpha*0.4})`;ctx.lineWidth=1.5;
+  for(let i=0;i<6;i++){
+    const a2=-Math.PI/2+(i/5)*Math.PI;
+    ctx.beginPath();ctx.moveTo(cx,cy-fh*0.48);
+    ctx.bezierCurveTo(cx+Math.cos(a2)*fw*0.18,cy-fh*0.3,cx+Math.cos(a2)*fw*0.28,cy-fh*0.14,cx+Math.cos(a2)*fw*0.38,cy+fh*0.02);ctx.stroke();
+  }
+  // Huge almond eyes
+  glow('rgba(0,255,200,1)',28);
+  ctx.fillStyle=`rgba(0,0,0,${alpha*0.96})`;
+  fillEllipse(cx-fw*0.19,cy-fh*0.02,fw*0.155,fw*0.1,'rgba(0,0,0,0.96)',0.25);
+  fillEllipse(cx+fw*0.19,cy-fh*0.02,fw*0.155,fw*0.1,'rgba(0,0,0,0.96)',-0.25);
+  // Blue iris
+  fillEllipse(cx-fw*0.19,cy-fh*0.02,fw*0.07,fw*0.04,'rgba(0,150,255,0.45)',0.25);
+  fillEllipse(cx+fw*0.19,cy-fh*0.02,fw*0.07,fw*0.04,'rgba(0,150,255,0.45)',-0.25);
+  // Highlight
+  fillEllipse(cx-fw*0.14,cy-fh*0.04,fw*0.025,fw*0.018,'rgba(150,255,255,0.35)');
+  fillEllipse(cx+fw*0.24,cy-fh*0.04,fw*0.025,fw*0.018,'rgba(150,255,255,0.35)');
+  // Slit mouth
+  glow('rgba(0,255,150,0.6)',10);
+  ctx.strokeStyle=`rgba(0,255,150,${alpha*0.65})`;ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(cx-fw*0.07,cy+fh*0.2);ctx.lineTo(cx+fw*0.07,cy+fh*0.2);ctx.stroke();
+  // Bio-particles
+  for(let i=0;i<14;i++){
+    const a2=(i/14)*Math.PI*2+t*0.65;const r=fw*0.52+Math.sin(t*2+i)*fw*0.07;
+    const px=cx+Math.cos(a2)*r,py=cy-fh*0.1+Math.sin(a2)*fh*0.42;
+    const ps=2+Math.sin(t*3+i)*1.5;
+    glow('rgba(0,255,150,0.9)',8);
+    fillEllipse(px,py,ps,ps,`rgba(0,255,150,${alpha*(0.3+0.4*Math.sin(t*2+i))})`);
+  }
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+function drawPredator(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Thermal
+  fillEllipse(cx,cy,fw*0.5,fh*0.6,gradCirc(cx,cy,fw*0.5,'rgba(255,140,0,0.35)','rgba(0,0,180,0.12)'));
+  // Dreadlocks
+  for(let i=0;i<9;i++){
+    const lx=cx-fw*0.46+i*fw*0.115;
+    ctx.strokeStyle=`rgba(${60+i*8},${40+i*4},15,${alpha*0.75})`;ctx.lineWidth=5;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(lx,cy-fh*0.35);
+    ctx.bezierCurveTo(lx+(i-4)*9,cy-fh*0.1,lx+(i-4)*5,cy+fh*0.12,lx+(i-4.5)*14,cy+fh*0.18);ctx.stroke();
+  }
+  // Mandibles
+  glow('rgba(200,140,0,0.8)',15);
+  ctx.fillStyle=`rgba(170,110,15,${alpha*0.88})`;
+  [[-0.23,-0.18],[-0.09,0.22],[0.09,0.22],[0.23,-0.18]].forEach(([ox,oy])=>{
+    fillEllipse(cx+ox*fw,cy+fh*0.22+oy*fw,fw*0.038,fw*0.135,'rgba(170,110,15,0.88)');
   });
-
-  // Exposed teeth / torn mouth
-  setGlow('rgba(200,220,150,0.5)', 8);
-  ctx.fillStyle = `rgba(180,200,130,${a*0.8})`;
-  for(let i=0; i<5; i++) {
-    const tx = cx - fw*0.18 + i*fw*0.09;
-    const tilt = (Math.random()*0.3 - 0.15);
-    ctx.save();
-    ctx.translate(tx, cy + fh*0.2);
-    ctx.rotate(tilt);
-    ctx.fillRect(-fw*0.03, 0, fw*0.055, fh*0.08 * (0.7+Math.random()*0.3));
-    ctx.restore();
-  }
-
-  // Dripping from face
-  ctx.fillStyle = `rgba(0,100,0,${a*0.6})`;
-  for(let i=0; i<3; i++) {
-    const dx = cx - fw*0.15 + i*fw*0.15;
-    const dlen = (fh*0.08 + i*fh*0.04) + Math.sin(t+i)*fh*0.02;
-    ctx.beginPath();
-    ctx.moveTo(dx-3, cy + fh*0.32);
-    ctx.lineTo(dx+3, cy + fh*0.32);
-    ctx.lineTo(dx+2, cy + fh*0.32 + dlen);
-    ctx.lineTo(dx-2, cy + fh*0.32 + dlen);
-    ctx.closePath();
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(dx, cy + fh*0.32 + dlen + 4, 5, 0, Math.PI*2);
-    ctx.fill();
-  }
-
-  ctx.globalAlpha = 1;
-  ctx.shadowBlur = 0;
+  // Triple dot eyes
+  glow('rgba(255,40,0,1)',22);
+  ctx.fillStyle=`rgba(255,40,0,${alpha*0.95})`;
+  [-0.12,0,0.12].forEach(o=>fillEllipse(cx+o*fw,cy-fh*0.06,fw*0.042,fw*0.042,'rgba(255,40,0,0.95)'));
+  ctx.globalAlpha=1;noGlow();ctx.restore();
 }
 
-// Helper: Glow eyes
-function drawGlowEyes(cx, ey, fw, color, a, style='round') {
-  const alpha = a;
-  setGlow(color, 20);
-  [-1,1].forEach(side => {
-    const ex = cx + side*fw*0.17;
-    ctx.fillStyle = color.replace(')', `,${alpha})`).replace('rgb','rgba').replace(/rgba\(([^)]+),([^)]+)\)/,`rgba($1,${alpha})`);
-    // Simpler:
-    ctx.globalAlpha = alpha;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    if (style === 'almond') {
-      ctx.ellipse(ex, ey, fw*0.12, fw*0.07, side*0.2, 0, Math.PI*2);
-    } else if (style === 'cat') {
-      ctx.ellipse(ex, ey, fw*0.1, fw*0.12, 0, 0, Math.PI*2);
-    } else {
-      ctx.arc(ex, ey, fw*0.08, 0, Math.PI*2);
-    }
-    ctx.fill();
-    ctx.fillStyle = 'rgba(0,0,0,0.8)';
-    ctx.shadowBlur = 0;
-    ctx.beginPath();
-    ctx.arc(ex + side*2, ey, fw*0.04, 0, Math.PI*2);
-    ctx.fill();
+function drawCyborg(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Chrome panel right half
+  const pg=ctx.createLinearGradient(cx,cy-fh*0.4,cx+fw*0.5,cy+fh*0.4);
+  pg.addColorStop(0,'rgba(180,200,220,0.48)');pg.addColorStop(0.5,'rgba(100,130,160,0.3)');pg.addColorStop(1,'rgba(60,80,100,0.15)');
+  fillEllipse(cx+fw*0.1,cy,fw*0.43,fh*0.56,pg);
+  // Circuit lines
+  glow('rgba(0,200,255,0.7)',10);
+  ctx.strokeStyle=`rgba(0,200,255,${alpha*0.65})`;ctx.lineWidth=1.5;
+  const circuits=[
+    [cx+fw*0.06,cy-fh*0.32,cx+fw*0.32,cy-fh*0.32,cx+fw*0.32,cy-fh*0.1,cx+fw*0.46,cy-fh*0.1],
+    [cx+fw*0.15,cy-fh*0.05,cx+fw*0.36,cy-fh*0.05,cx+fw*0.36,cy+fh*0.12],
+    [cx+fw*0.1,cy+fh*0.17,cx+fw*0.41,cy+fh*0.17,cx+fw*0.41,cy+fh*0.32],
+  ];
+  circuits.forEach(pts=>{
+    ctx.beginPath();ctx.moveTo(pts[0],pts[1]);
+    for(let i=2;i<pts.length;i+=2) ctx.lineTo(pts[i],pts[i+1]);ctx.stroke();
+    ctx.fillStyle=`rgba(0,200,255,${alpha*0.95})`;
+    for(let i=0;i<pts.length;i+=2)fillEllipse(pts[i],pts[i+1],3,3,'rgba(0,200,255,0.95)');
+  });
+  // Laser eye right
+  glow('rgba(255,0,100,1)',28);
+  fillEllipse(cx+fw*0.18,cy-fh*0.04,fw*0.072,fw*0.072,'rgba(255,0,100,0.95)');
+  const lg=ctx.createLinearGradient(cx+fw*0.25,cy-fh*0.04,cx+fw*0.25+fw*1.5,cy-fh*0.04);
+  lg.addColorStop(0,`rgba(255,0,100,${alpha*0.9})`);lg.addColorStop(1,'transparent');
+  ctx.fillStyle=lg;ctx.fillRect(cx+fw*0.26,cy-fh*0.055,fw*1.5,fh*0.03);
+  // Normal left eye
+  noGlow();
+  fillEllipse(cx-fw*0.17,cy-fh*0.04,fw*0.075,fw*0.062,'rgba(80,100,130,0.75)');
+  fillEllipse(cx-fw*0.17,cy-fh*0.04,fw*0.037,fw*0.037,'rgba(0,0,0,0.9)');
+  // Jaw wires
+  glow('rgba(0,200,255,0.5)',8);
+  ctx.strokeStyle=`rgba(0,200,255,${alpha*0.52})`;ctx.lineWidth=2;
+  for(let i=0;i<3;i++){
+    ctx.beginPath();ctx.moveTo(cx+fw*0.1,cy+fh*0.24);
+    ctx.bezierCurveTo(cx+fw*0.22+i*fw*0.07,cy+fh*0.3,cx+fw*0.36,cy+fh*0.34,cx+fw*0.42,cy+fh*0.26);ctx.stroke();
+  }
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+// ================================================================
+// AOT EFFECTS
+// ================================================================
+
+function drawEren(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Glowing green titanium aura
+  glow('rgba(0,220,80,1)',35);
+  const ag=gradCirc(cx,cy-fh*0.1,fw*0.55,'rgba(0,220,80,0.35)','transparent');
+  fillEllipse(cx,cy-fh*0.1,fw*0.55,fh*0.65,ag);
+  // Steam/smoke rising
+  for(let i=0;i<8;i++){
+    const sx=cx-fw*0.4+i*fw*0.11;
+    const sy=cy-fh*0.4-Math.sin(t+i)*20;
+    const ss=ctx.createRadialGradient(sx,sy,0,sx,sy,fw*0.08);
+    ss.addColorStop(0,`rgba(200,220,255,${alpha*0.35})`);ss.addColorStop(1,'transparent');
+    fillEllipse(sx,sy,fw*0.09,fw*0.13,ss);
+  }
+  // Attack titan eyes — glowing jade green
+  glow('rgba(50,255,100,1)',25);
+  fillEllipse(cx-fw*0.17,cy-fh*0.03,fw*0.1,fw*0.07,'rgba(50,255,100,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.03,fw*0.1,fw*0.07,'rgba(50,255,100,0.95)');
+  fillEllipse(cx-fw*0.17,cy-fh*0.03,fw*0.05,fw*0.035,'rgba(0,0,0,0.9)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.03,fw*0.05,fw*0.035,'rgba(0,0,0,0.9)');
+  // Survey Corps wings emblem on forehead
+  glow('rgba(0,220,80,0.9)',12);
+  ctx.strokeStyle=`rgba(0,220,80,${alpha*0.75})`;ctx.lineWidth=2;
+  // Wings of Freedom sketch
+  [-1,1].forEach(s=>{
+    ctx.save();ctx.translate(cx+s*fw*0.15,cy-fh*0.28);if(s<0)ctx.scale(-1,1);
+    ctx.beginPath();ctx.moveTo(0,0);
+    ctx.bezierCurveTo(fw*0.08,-fh*0.05,fw*0.14,-fh*0.02,fw*0.12,fh*0.04);
+    ctx.bezierCurveTo(fw*0.06,fh*0.08,0,fh*0.04,0,0);
+    ctx.stroke();ctx.restore();
+  });
+  // Lightning sparks (titanification)
+  glow('rgba(0,255,100,1)',15);
+  for(let i=0;i<6;i++){
+    const a2=(i/6)*Math.PI*2+t*2;const r=fw*0.55;
+    const lx=cx+Math.cos(a2)*r,ly=cy-fh*0.1+Math.sin(a2)*fh*0.45;
+    ctx.strokeStyle=`rgba(80,255,120,${alpha*(0.3+0.5*Math.sin(t*4+i))})`;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.moveTo(lx,ly);
+    ctx.lineTo(lx+Math.cos(a2+Math.PI)*fw*0.08,ly+Math.sin(a2+Math.PI)*fh*0.06);ctx.stroke();
+  }
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+function drawMikasa(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Blades / ODM gear effect — cyan blades slashing
+  glow('rgba(0,220,255,1)',20);
+  [-1,1].forEach(s=>{
+    ctx.strokeStyle=`rgba(200,240,255,${alpha*0.9})`;ctx.lineWidth=3;
+    ctx.save();ctx.translate(cx+s*fw*0.3,cy);ctx.rotate(s*0.6);
+    ctx.beginPath();ctx.moveTo(0,-fh*0.28);ctx.lineTo(0,fh*0.28);ctx.stroke();
+    // Blade glint
+    const bg=ctx.createLinearGradient(0,-fh*0.28,0,fh*0.28);
+    bg.addColorStop(0,'rgba(255,255,255,0.8)');bg.addColorStop(0.5,'rgba(0,220,255,0.6)');bg.addColorStop(1,'transparent');
+    ctx.strokeStyle=bg;ctx.lineWidth=6;ctx.stroke();ctx.restore();
+  });
+  // Red scarf
+  glow('rgba(200,0,0,0.8)',15);
+  const sg=ctx.createLinearGradient(cx-fw*0.5,cy+fh*0.22,cx+fw*0.5,cy+fh*0.38);
+  sg.addColorStop(0,'rgba(180,0,0,0.75)');sg.addColorStop(0.5,'rgba(220,20,0,0.85)');sg.addColorStop(1,'rgba(160,0,0,0.6)');
+  ctx.fillStyle=sg;ctx.beginPath();
+  ctx.ellipse(cx,cy+fh*0.3,fw*0.5,fh*0.12,0,0,Math.PI*2);ctx.fill();
+  // Determined eyes
+  glow('rgba(80,100,255,0.9)',15);
+  ctx.fillStyle=`rgba(60,80,220,${alpha*0.9})`;
+  fillEllipse(cx-fw*0.17,cy-fh*0.04,fw*0.09,fw*0.065,'rgba(60,80,220,0.9)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.04,fw*0.09,fw*0.065,'rgba(60,80,220,0.9)');
+  fillEllipse(cx-fw*0.17,cy-fh*0.04,fw*0.042,fw*0.042,'rgba(0,0,0,0.9)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.04,fw*0.042,fw*0.042,'rgba(0,0,0,0.9)');
+  // ODM gear lines
+  ctx.strokeStyle=`rgba(150,200,255,${alpha*0.4})`;ctx.lineWidth=1.5;
+  glow('rgba(0,220,255,0.4)',6);
+  [[-fw*0.45,cy-fh*0.1],[fw*0.45,cy-fh*0.1]].forEach(([ex,ey])=>{
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+ex,ey);ctx.stroke();
+  });
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+function drawColossal(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Exposed muscle/steam — colossal titan has no skin
+  glow('rgba(255,80,0,1)',40);
+  const cg=gradCirc(cx,cy,fw*0.56,'rgba(255,60,0,0.6)','transparent');
+  fillEllipse(cx,cy,fw*0.56,fh*0.65,cg);
+  // Exposed muscle texture lines
+  ctx.strokeStyle=`rgba(200,40,0,${alpha*0.6})`;ctx.lineWidth=2;
+  for(let i=0;i<8;i++){
+    const mx=cx-fw*0.4+i*fw*0.11;
+    ctx.beginPath();ctx.moveTo(mx,cy-fh*0.4);
+    ctx.bezierCurveTo(mx+fw*0.04,cy-fh*0.1,mx-fw*0.04,cy+fh*0.1,mx+fw*0.02,cy+fh*0.4);ctx.stroke();
+  }
+  // Steam eruptions
+  for(let i=0;i<10;i++){
+    const sx=cx-fw*0.5+i*fw*0.11;
+    const sy=cy-fh*0.5-Math.abs(Math.sin(t*1.5+i))*fh*0.3;
+    const stg=ctx.createRadialGradient(sx,sy,0,sx,sy,fw*0.12);
+    stg.addColorStop(0,`rgba(255,200,150,${alpha*0.5})`);stg.addColorStop(1,'transparent');
+    fillEllipse(sx,sy,fw*0.12,fw*0.18,stg);
+  }
+  // Glowing hollow eyes (no eyelids)
+  glow('rgba(255,100,0,1)',30);
+  fillEllipse(cx-fw*0.18,cy-fh*0.04,fw*0.12,fh*0.1,'rgba(0,0,0,0.9)');
+  fillEllipse(cx+fw*0.18,cy-fh*0.04,fw*0.12,fh*0.1,'rgba(0,0,0,0.9)');
+  // Inner glow eye
+  fillEllipse(cx-fw*0.18,cy-fh*0.04,fw*0.06,fh*0.05,gradCirc(cx-fw*0.18,cy-fh*0.04,fw*0.06,'rgba(255,100,0,0.8)','rgba(255,50,0,0)'));
+  fillEllipse(cx+fw*0.18,cy-fh*0.04,fw*0.06,fh*0.05,gradCirc(cx+fw*0.18,cy-fh*0.04,fw*0.06,'rgba(255,100,0,0.8)','rgba(255,50,0,0)'));
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+function drawArmored(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  glow('rgba(200,150,50,0.8)',20);
+  // Armored plates — geometric hard plating
+  const pColor=`rgba(180,140,60,${alpha*0.85})`;
+  const pDark=`rgba(120,90,30,${alpha*0.7})`;
+  // Forehead plate
+  ctx.fillStyle=pColor;ctx.beginPath();
+  ctx.moveTo(cx-fw*0.35,cy-fh*0.3);ctx.lineTo(cx+fw*0.35,cy-fh*0.3);ctx.lineTo(cx+fw*0.28,cy-fh*0.48);ctx.lineTo(cx-fw*0.28,cy-fh*0.48);ctx.closePath();ctx.fill();
+  ctx.strokeStyle=pDark;ctx.lineWidth=2;ctx.stroke();
+  // Cheek plates
+  [-1,1].forEach(s=>{
+    ctx.fillStyle=pColor;ctx.beginPath();
+    ctx.moveTo(cx+s*fw*0.18,cy-fh*0.08);ctx.lineTo(cx+s*fw*0.42,cy-fh*0.02);
+    ctx.lineTo(cx+s*fw*0.4,cy+fh*0.22);ctx.lineTo(cx+s*fw*0.16,cy+fh*0.18);ctx.closePath();ctx.fill();
+    ctx.strokeStyle=pDark;ctx.stroke();
+  });
+  // Crack lines on armor
+  ctx.strokeStyle=`rgba(80,55,15,${alpha*0.6})`;ctx.lineWidth=1.5;
+  [[cx-fw*0.1,cy-fh*0.45,cx,cy-fh*0.28],[cx+fw*0.05,cy-fh*0.42,cx+fw*0.15,cy-fh*0.3]]
+    .forEach(([x1,y1,x2,y2])=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();});
+  // Eyes behind armor
+  glow('rgba(255,150,0,0.9)',18);
+  fillEllipse(cx-fw*0.16,cy-fh*0.04,fw*0.085,fw*0.062,'rgba(255,120,0,0.9)');
+  fillEllipse(cx+fw*0.16,cy-fh*0.04,fw*0.085,fw*0.062,'rgba(255,120,0,0.9)');
+  fillEllipse(cx-fw*0.16,cy-fh*0.04,fw*0.038,fw*0.038,'rgba(0,0,0,0.95)');
+  fillEllipse(cx+fw*0.16,cy-fh*0.04,fw*0.038,fw*0.038,'rgba(0,0,0,0.95)');
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+function drawWarhammer(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Crystal / white hardening overlay
+  glow('rgba(220,200,255,1)',30);
+  fillEllipse(cx,cy,fw*0.5,fh*0.58,gradCirc(cx,cy,fw*0.5,'rgba(200,180,255,0.4)','transparent'));
+  // Crystal spikes emerging from face
+  ctx.fillStyle=`rgba(220,210,255,${alpha*0.85})`;
+  [[cx-fw*0.3,cy-fh*0.35,-0.4],[cx+fw*0.3,cy-fh*0.35,0.4],[cx,cy-fh*0.5,0],[cx-fw*0.45,cy-fh*0.1,-0.6],[cx+fw*0.45,cy-fh*0.1,0.6]]
+    .forEach(([sx,sy,r])=>{
+      ctx.save();ctx.translate(sx,sy);ctx.rotate(r);
+      ctx.beginPath();ctx.moveTo(0,-fh*0.15);ctx.lineTo(fw*0.04,fh*0.05);ctx.lineTo(-fw*0.04,fh*0.05);ctx.closePath();ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.4)';ctx.lineWidth=1;ctx.stroke();
+      ctx.restore();
+    });
+  // Warhammer above head
+  glow('rgba(220,200,255,1)',20);
+  ctx.fillStyle=`rgba(200,180,255,${alpha*0.9})`;
+  ctx.fillRect(cx-fw*0.4,cy-fh*0.72,fw*0.8,fh*0.08);// hammer head
+  ctx.fillRect(cx-fw*0.03,cy-fh*0.72,fw*0.06,fh*0.25);// handle
+  ctx.strokeStyle='rgba(255,255,255,0.5)';ctx.lineWidth=1.5;ctx.strokeRect(cx-fw*0.4,cy-fh*0.72,fw*0.8,fh*0.08);
+  // Crystalline eyes
+  glow('rgba(255,255,255,1)',25);
+  fillEllipse(cx-fw*0.17,cy-fh*0.03,fw*0.09,fw*0.065,'rgba(255,255,255,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.03,fw*0.09,fw*0.065,'rgba(255,255,255,0.95)');
+  fillEllipse(cx-fw*0.17,cy-fh*0.03,fw*0.038,fw*0.038,'rgba(100,50,200,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.03,fw*0.038,fw*0.038,'rgba(100,50,200,0.95)');
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+function drawJaw(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  glow('rgba(180,100,255,0.9)',25);
+  fillEllipse(cx,cy,fw*0.5,fh*0.58,gradCirc(cx,cy,fw*0.5,'rgba(150,80,220,0.42)','transparent'));
+  // Hardened jaw / mandibles
+  ctx.fillStyle=`rgba(140,80,200,${alpha*0.9})`;
+  // Lower jaw plates
+  ctx.beginPath();ctx.moveTo(cx-fw*0.38,cy+fh*0.12);ctx.lineTo(cx+fw*0.38,cy+fh*0.12);
+  ctx.lineTo(cx+fw*0.32,cy+fh*0.38);ctx.lineTo(cx-fw*0.32,cy+fh*0.38);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='rgba(200,140,255,0.5)';ctx.lineWidth=2;ctx.stroke();
+  // Massive teeth (jaw titan)
+  ctx.fillStyle=`rgba(240,235,255,${alpha*0.95})`;
+  for(let i=0;i<6;i++){
+    const tx=cx-fw*0.28+i*fw*0.112;
+    ctx.beginPath();ctx.moveTo(tx,cy+fh*0.12);ctx.lineTo(tx+fw*0.04,cy+fh*0.3);ctx.lineTo(tx+fw*0.09,cy+fh*0.12);ctx.closePath();ctx.fill();
+  }
+  glow('rgba(200,150,255,0.9)',18);
+  fillEllipse(cx-fw*0.17,cy-fh*0.05,fw*0.1,fw*0.07,'rgba(190,130,255,0.9)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.05,fw*0.1,fw*0.07,'rgba(190,130,255,0.9)');
+  fillEllipse(cx-fw*0.17,cy-fh*0.05,fw*0.042,fw*0.042,'rgba(0,0,0,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.05,fw*0.042,fw*0.042,'rgba(0,0,0,0.95)');
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+// ================================================================
+// ANIME EFFECTS
+// ================================================================
+
+function drawLuffy(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Straw hat — iconic
+  glow('rgba(220,170,30,0.9)',20);
+  const hatY=cy-fh*0.28;
+  // Hat brim (huge)
+  ctx.fillStyle=`rgba(210,160,25,${alpha*0.9})`;
+  fillEllipse(cx,hatY,fw*0.75,fw*0.12,'rgba(210,160,25,0.9)');
+  // Hat dome
+  const hg2=gradCirc(cx,hatY-fw*0.15,fw*0.48,'rgba(230,185,40,0.88)','rgba(190,140,20,0.75)');
+  fillEllipse(cx,hatY-fw*0.14,fw*0.48,fw*0.28,hg2);
+  // Red band
+  ctx.fillStyle=`rgba(210,20,20,${alpha*0.85})`;ctx.fillRect(cx-fw*0.48,hatY-fw*0.02,fw*0.96,fw*0.045);
+  // X scar under eye
+  glow('rgba(255,0,0,0.8)',10);
+  ctx.strokeStyle=`rgba(200,30,30,${alpha*0.85})`;ctx.lineWidth=2.5;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(cx+fw*0.1,cy-fh*0.08);ctx.lineTo(cx+fw*0.17,cy-fh*0.01);ctx.stroke();
+  // Gear 5 eyes — white / sun god
+  glow('rgba(255,255,200,1)',20);
+  ctx.fillStyle=`rgba(255,255,180,${alpha*0.95})`;
+  fillEllipse(cx-fw*0.16,cy-fh*0.03,fw*0.09,fw*0.08,'rgba(255,255,180,0.95)');
+  fillEllipse(cx+fw*0.16,cy-fh*0.03,fw*0.09,fw*0.08,'rgba(255,255,180,0.95)');
+  fillEllipse(cx-fw*0.16,cy-fh*0.03,fw*0.04,fw*0.04,'rgba(0,0,0,0.95)');
+  fillEllipse(cx+fw*0.16,cy-fh*0.03,fw*0.04,fw*0.04,'rgba(0,0,0,0.95)');
+  // Giant grin
+  glow('rgba(255,100,0,0.5)',8);
+  ctx.strokeStyle=`rgba(0,0,0,${alpha*0.9})`;ctx.lineWidth=fw*0.045;ctx.lineCap='round';
+  ctx.beginPath();ctx.arc(cx,cy+fh*0.1,fw*0.22,0.2,Math.PI-0.2);ctx.stroke();
+  // Conqueror's Haki aura
+  for(let i=0;i<8;i++){
+    const a2=(i/8)*Math.PI*2+t;const r=fw*0.58+Math.sin(t*3+i)*fw*0.07;
+    const px=cx+Math.cos(a2)*r,py=cy-fh*0.05+Math.sin(a2)*fh*0.45;
+    glow('rgba(200,150,0,0.8)',6);
+    fillEllipse(px,py,3,3,`rgba(255,200,50,${alpha*(0.4+0.4*Math.sin(t*2+i))})`);
+  }
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+function drawGoku(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Super Saiyan golden aura — massive
+  glow('rgba(255,220,0,1)',50);
+  for(let r=fw*0.7;r>0;r-=fw*0.15){
+    const a2=alpha*(r/(fw*0.7))*0.3;
+    fillEllipse(cx,cy-fh*0.1,r,r*1.1,`rgba(255,${200+r},0,${a2})`);
+  }
+  // Super Saiyan hair — spiky golden
+  glow('rgba(255,210,0,1)',25);
+  ctx.fillStyle=`rgba(255,210,0,${alpha*0.95})`;
+  // Multiple hair spikes shooting up
+  const spikes=[
+    [cx,cy-fh*0.42,fw*0.08,fh*0.32],
+    [cx-fw*0.14,cy-fh*0.36,fw*0.07,fh*0.25],
+    [cx+fw*0.14,cy-fh*0.36,fw*0.07,fh*0.25],
+    [cx-fw*0.26,cy-fh*0.28,fw*0.06,fh*0.18],
+    [cx+fw*0.26,cy-fh*0.28,fw*0.06,fh*0.18],
+    [cx-fw*0.08,cy-fh*0.46,fw*0.055,fh*0.22],
+    [cx+fw*0.08,cy-fh*0.46,fw*0.055,fh*0.22],
+  ];
+  spikes.forEach(([sx,sy,sw,sh])=>{
+    const sg2=ctx.createLinearGradient(sx,sy-sh/2,sx,sy+sh/2);
+    sg2.addColorStop(0,'rgba(255,230,0,0.95)');sg2.addColorStop(1,'rgba(255,170,0,0.8)');
+    ctx.fillStyle=sg2;ctx.beginPath();
+    ctx.moveTo(sx,sy-sh);ctx.lineTo(sx+sw,sy+sh);ctx.lineTo(sx-sw,sy+sh);ctx.closePath();ctx.fill();
+  });
+  // Teal eyes (base form) or teal blue (SSB hint)
+  glow('rgba(50,200,255,1)',20);
+  fillEllipse(cx-fw*0.17,cy-fh*0.03,fw*0.09,fw*0.07,'rgba(50,200,255,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.03,fw*0.09,fw*0.07,'rgba(50,200,255,0.95)');
+  fillEllipse(cx-fw*0.17,cy-fh*0.03,fw*0.042,fw*0.042,'rgba(0,0,0,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.03,fw*0.042,fw*0.042,'rgba(0,0,0,0.95)');
+  // Kamehameha energy rings
+  glow('rgba(50,150,255,0.8)',20);
+  [0.45,0.6,0.75].forEach((r,i)=>{
+    const pulseR=fw*r+Math.sin(t*3+i)*fw*0.03;
+    ctx.strokeStyle=`rgba(50,150,255,${alpha*(0.5-i*0.15)})`;ctx.lineWidth=2-i*0.5;
+    ring(cx,cy-fh*0.05,pulseR,`rgba(50,150,255,${alpha*(0.5-i*0.15)})`,2-i*0.5);
+  });
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+function drawChainsaw(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  glow('rgba(200,0,0,0.9)',25);
+  // Denji's chainsaw devil transformation
+  // Blood splatter BG
+  fillEllipse(cx,cy,fw*0.52,fh*0.6,gradCirc(cx,cy,fw*0.52,'rgba(180,0,0,0.45)','transparent'));
+  // Chainsaw blades emerging from head
+  glow('rgba(255,50,0,1)',20);
+  ctx.fillStyle=`rgba(60,60,60,${alpha*0.9})`;
+  // Center chainsaw on forehead
+  const chainY=cy-fh*0.35;
+  ctx.fillRect(cx-fw*0.04,chainY-fh*0.32,fw*0.08,fh*0.35);// blade
+  // Chain teeth
+  ctx.fillStyle=`rgba(180,180,180,${alpha*0.9})`;
+  for(let i=0;i<8;i++){
+    const ty=chainY-fh*0.3+i*fh*0.04;
+    ctx.fillRect(cx+fw*0.04,ty,fw*0.04,fh*0.025);
+    ctx.fillRect(cx-fw*0.08,ty+fh*0.01,fw*0.04,fh*0.025);
+  }
+  // Blood drip from chainsaw
+  glow('rgba(255,0,0,0.8)',15);
+  ctx.fillStyle=`rgba(200,0,0,${alpha*0.85})`;
+  for(let i=0;i<4;i++){
+    const dx=cx-fw*0.02+i*fw*0.015;
+    const dl=fh*0.06+i*fh*0.03+Math.sin(t*2+i)*fh*0.02;
+    ctx.fillRect(dx,chainY+2,fw*0.012,dl);
+    fillEllipse(dx+fw*0.006,chainY+dl+6,fw*0.014,fw*0.014,`rgba(200,0,0,${alpha*0.85})`);
+  }
+  // Devil eyes (orange/red split)
+  glow('rgba(255,80,0,1)',22);
+  fillEllipse(cx-fw*0.17,cy-fh*0.03,fw*0.1,fw*0.075,'rgba(255,80,0,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.03,fw*0.1,fw*0.075,'rgba(255,80,0,0.95)');
+  // Vertical pupils (devil)
+  ctx.fillStyle='rgba(0,0,0,0.95)';
+  ctx.fillRect(cx-fw*0.177,cy-fh*0.065,fw*0.025,fh*0.07);
+  ctx.fillRect(cx+fw*0.155,cy-fh*0.065,fw*0.025,fh*0.07);
+  // Flying blood droplets
+  for(let i=0;i<8;i++){
+    const a2=(i/8)*Math.PI*2+t*0.5;const r=fw*0.5+Math.sin(t+i)*fw*0.1;
+    const px=cx+Math.cos(a2)*r,py=cy-fh*0.05+Math.sin(a2)*fh*0.43;
+    fillEllipse(px,py,fw*0.018,fw*0.012,`rgba(200,0,0,${alpha*(0.4+0.3*Math.sin(t*3+i))})`);
+  }
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+// ================================================================
+// TOON EFFECTS
+// ================================================================
+
+function drawSponge(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Yellow sponge face
+  const yg=gradCirc(cx,cy,fw*0.5,'rgba(255,235,0,0.65)','rgba(200,180,0,0.2)');
+  fillEllipse(cx,cy,fw*0.5,fh*0.55,yg);
+  // Pores on sponge
+  ctx.fillStyle=`rgba(220,200,0,${alpha*0.4})`;
+  for(let i=0;i<12;i++){
+    const px=cx-fw*0.38+(i%4)*fw*0.25;const py=cy-fh*0.35+Math.floor(i/4)*fh*0.22;
+    fillEllipse(px+Math.sin(i)*fw*0.05,py,fw*0.04,fw*0.035,'rgba(200,180,0,0.4)');
+  }
+  // Big blue eyes
+  glow('rgba(50,150,255,0.8)',15);
+  fillEllipse(cx-fw*0.17,cy-fh*0.07,fw*0.12,fw*0.14,'rgba(255,255,255,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.07,fw*0.12,fw*0.14,'rgba(255,255,255,0.95)');
+  fillEllipse(cx-fw*0.17,cy-fh*0.07,fw*0.07,fw*0.09,'rgba(50,150,255,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.07,fw*0.07,fw*0.09,'rgba(50,150,255,0.95)');
+  fillEllipse(cx-fw*0.17,cy-fh*0.07,fw*0.035,fw*0.045,'rgba(0,0,0,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.07,fw*0.035,fw*0.045,'rgba(0,0,0,0.95)');
+  // Nose
+  fillEllipse(cx,cy+fh*0.05,fw*0.045,fw*0.04,'rgba(255,200,50,0.9)');
+  // Buck teeth
+  ctx.fillStyle=`rgba(255,255,255,${alpha*0.95})`;
+  ctx.fillRect(cx-fw*0.07,cy+fh*0.14,fw*0.06,fh*0.08);
+  ctx.fillRect(cx+fw*0.01,cy+fh*0.14,fw*0.06,fh*0.08);
+  ctx.strokeStyle=`rgba(200,200,200,${alpha*0.6})`;ctx.lineWidth=1.5;
+  ctx.strokeRect(cx-fw*0.07,cy+fh*0.14,fw*0.06,fh*0.08);ctx.strokeRect(cx+fw*0.01,cy+fh*0.14,fw*0.06,fh*0.08);
+  ctx.strokeStyle='rgba(0,0,0,0.5)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(cx,cy+fh*0.14);ctx.lineTo(cx,cy+fh*0.22);ctx.stroke();
+  // Tie (white shirt collar visible bottom)
+  ctx.fillStyle=`rgba(255,255,255,${alpha*0.6})`;ctx.fillRect(cx-fw*0.06,cy+fh*0.38,fw*0.12,fh*0.1);
+  ctx.fillStyle=`rgba(200,0,0,${alpha*0.7})`;ctx.fillRect(cx-fw*0.015,cy+fh*0.39,fw*0.03,fh*0.09);
+  // Bubbles!
+  glow('rgba(100,200,255,0.5)',8);
+  for(let i=0;i<6;i++){
+    const a2=(i/6)*Math.PI*2+t;const r=fw*0.56+Math.sin(t*2+i)*fw*0.08;
+    const px=cx+Math.cos(a2)*r,py=cy-fh*0.05+Math.sin(a2)*fh*0.42;
+    ctx.strokeStyle=`rgba(100,200,255,${alpha*(0.4+0.3*Math.sin(t*2+i))})`;ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(px,py,5+Math.sin(t+i)*2,0,Math.PI*2);ctx.stroke();
+  }
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+function drawShrek(cx,cy,fw,fh){
+  ctx.save();ctx.globalAlpha=alpha;
+  // Green ogre
+  const gg=gradCirc(cx,cy,fw*0.52,'rgba(90,175,45,0.58)','transparent');
+  fillEllipse(cx,cy,fw*0.52,fh*0.6,gg);
+  // Ogre ears (round nubs)
+  glow('rgba(90,175,45,0.7)',15);
+  [-1,1].forEach(s=>{
+    fillEllipse(cx+s*fw*0.44,cy-fh*0.1,fw*0.15,fw*0.19,'rgba(85,165,40,0.85)');
+    fillEllipse(cx+s*fw*0.44,cy-fh*0.1,fw*0.08,fw*0.1,'rgba(70,140,30,0.75)');
+  });
+  // Bulbous nose
+  glow('rgba(90,175,45,0.6)',10);
+  fillEllipse(cx,cy+fh*0.08,fw*0.14,fw*0.1,gradCirc(cx,cy+fh*0.08,fw*0.14,'rgba(110,190,55,0.85)','rgba(60,120,25,0.45)'));
+  // Nostrils
+  fillEllipse(cx-fw*0.04,cy+fh*0.1,fw*0.025,fw*0.02,'rgba(50,100,20,0.6)');
+  fillEllipse(cx+fw*0.04,cy+fh*0.1,fw*0.025,fw*0.02,'rgba(50,100,20,0.6)');
+  // Brown eyes
+  glow('rgba(150,100,20,0.6)',8);
+  fillEllipse(cx-fw*0.17,cy-fh*0.07,fw*0.09,fw*0.075,'rgba(140,90,15,0.9)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.07,fw*0.09,fw*0.075,'rgba(140,90,15,0.9)');
+  fillEllipse(cx-fw*0.17,cy-fh*0.07,fw*0.042,fw*0.042,'rgba(0,0,0,0.95)');
+  fillEllipse(cx+fw*0.17,cy-fh*0.07,fw*0.042,fw*0.042,'rgba(0,0,0,0.95)');
+  // Unibrow
+  glow('rgba(60,100,20,0.6)',6);
+  ctx.strokeStyle=`rgba(55,95,18,${alpha*0.88})`;ctx.lineWidth=fw*0.047;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(cx-fw*0.29,cy-fh*0.14);ctx.quadraticCurveTo(cx,cy-fh*0.2,cx+fw*0.29,cy-fh*0.14);ctx.stroke();
+  // Swamp onion rings floating
+  glow('rgba(150,100,0,0.5)',8);
+  for(let i=0;i<4;i++){
+    const a2=(i/4)*Math.PI*2+t*0.5;const r=fw*0.58+i*fw*0.05;
+    ctx.strokeStyle=`rgba(160,120,20,${alpha*0.25})`;ctx.lineWidth=2;
+    ctx.beginPath();ctx.ellipse(cx+Math.cos(a2)*fw*0.1,cy-fh*0.05+Math.sin(a2)*fh*0.1,r*0.6,r*0.35,a2*0.3,0,Math.PI*2);ctx.stroke();
+  }
+  ctx.globalAlpha=1;noGlow();ctx.restore();
+}
+
+// ================================================================
+// EYE PAIR HELPER
+// ================================================================
+function drawEyePair(cx,ey,fw,col,style='round'){
+  [-1,1].forEach(s=>{
+    const ex=cx+s*fw*0.17;
+    glow(col.replace('rgba(','rgba(').replace(/[\d.]+\)$/,'0.8)'),18);
+    ctx.fillStyle=col;
+    if(style==='almond') fillEllipse(ex,ey,fw*0.12,fw*0.07,col,s*0.2);
+    else if(style==='cat') fillEllipse(ex,ey,fw*0.1,fw*0.12,col);
+    else fillEllipse(ex,ey,fw*0.085,fw*0.085,col);
+    fillEllipse(ex+s*2,ey,fw*0.042,fw*0.042,'rgba(0,0,0,0.95)');
   });
 }
-
-// Helper: Triangle (eye shape for pumpkin)
-function drawTriangle(cx, cy, w, h) {
-  ctx.beginPath();
-  ctx.moveTo(cx, cy - h);
-  ctx.lineTo(cx + w, cy + h);
-  ctx.lineTo(cx - w, cy + h);
-  ctx.closePath();
-  ctx.fill();
-}
-
-// Helper: Star
-function drawStar(cx, cy, outerR, innerR, color, a) {
-  ctx.globalAlpha = a;
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  for(let i=0; i<10; i++) {
-    const angle = (i/10)*Math.PI*2 - Math.PI/2;
-    const r = i%2===0 ? outerR : innerR;
-    if(i===0) ctx.moveTo(cx + Math.cos(angle)*r, cy + Math.sin(angle)*r);
-    else ctx.lineTo(cx + Math.cos(angle)*r, cy + Math.sin(angle)*r);
-  }
-  ctx.closePath();
-  ctx.fill();
-}
-
-// Animate stats when active
-setInterval(() => {
-  if (!cameraActive) return;
-  const now = new Date();
-  // Subtle shimmer on bars when active
-  if (currentEffect) {
-    const ef = effects[currentEffect];
-    const flicker = 1 + (Math.random()-0.5)*0.05;
-    document.getElementById('threatBar').style.width = (ef.threat * flicker) + '%';
-    document.getElementById('alienBar').style.width = (ef.alien * flicker) + '%';
-    document.getElementById('magicBar').style.width = (ef.magic * flicker) + '%';
-  }
-}, 200);
 </script>
 </body>
 </html>
