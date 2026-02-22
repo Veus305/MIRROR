@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SPECTER•MIRROR — Alien Halloween Interface</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Creepster&display=swap');
+
+  :root {
+    --alien-green: #00ff88;
+    --alien-cyan: #00e5ff;
+    --alien-purple: #bf00ff;
+    --alien-red: #ff003c;
+    --alien-orange: #ff6600;
+    --dark: #020408;
+    --panel: rgba(0,255,136,0.05);
+    --border: rgba(0,255,136,0.2);
+    --glow: 0 0 20px rgba(0,255,136,0.4), 0 0 60px rgba(0,255,136,0.1);
+    --glow-cyan: 0 0 20px rgba(0,229,255,0.4), 0 0 60px rgba(0,229,255,0.1);
+    --glow-red: 0 0 20px rgba(255,0,60,0.4), 0 0 60px rgba(255,0,60,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--alien-green);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: gridShift 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,255,136,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(0,229,255,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 20% 80%, rgba(191,0,255,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes gridShift {
+    0% { transform: translate(0,0); }
+    100% { transform: translate(40px, 40px); }
+  }
+
+  /* HEADER */
+  header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 20px 20px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    font-weight: 900;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--alien-green);
+    text-shadow: var(--glow);
+    animation: logoFlicker 4s infinite;
+  }
+
+  .logo span { color: var(--alien-cyan); text-shadow: var(--glow-cyan); }
+
+  @keyframes logoFlicker {
+    0%,96%,100% { opacity: 1; }
+    97% { opacity: 0.7; }
+    98% { opacity: 1; }
+    99% { opacity: 0.5; }
+  }
+
+  .subtitle {
+    font-size: 0.7rem;
+    letter-spacing: 0.5em;
+    color: rgba(0,255,136,0.5);
+    margin-top: 4px;
+    text-transform: uppercase;
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 20px;
+    background: rgba(0,255,136,0.03);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: rgba(0,255,136,0.6);
+    position: relative;
+    z-index: 10;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--alien-green);
+    margin-right: 6px;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.8); }
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 220px 1fr 220px;
+    gap: 0;
+    min-height: calc(100vh - 110px);
+    position: relative;
+    z-index: 5;
+  }
+
+  /* SIDE PANELS */
+  .side-panel {
+    border-right: 1px solid var(--border);
+    padding: 15px 12px;
+    background: var(--panel);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+  }
+
+  .side-panel.right { border-right: none; border-left: 1px solid var(--border); }
+
+  .panel-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--alien-cyan);
+    text-transform: uppercase;
+    text-shadow: var(--glow-cyan);
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,229,255,0.2);
+  }
+
+  /* EFFECT BUTTONS */
+  .effects-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .effect-btn {
+    background: rgba(0,255,136,0.04);
+    border: 1px solid rgba(0,255,136,0.2);
+    color: var(--alien-green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    padding: 10px 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    border-radius: 2px;
+  }
+
+  .effect-btn .icon { font-size: 1.5rem; line-height: 1; }
+
+  .effect-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(0,255,136,0.08) 100%);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .effect-btn:hover, .effect-btn.active {
+    border-color: var(--alien-green);
+    box-shadow: var(--glow), inset 0 0 15px rgba(0,255,136,0.05);
+    color: #fff;
+    background: rgba(0,255,136,0.1);
+  }
+
+  .effect-btn:hover::before, .effect-btn.active::before { opacity: 1; }
+
+  .effect-btn.active {
+    border-color: var(--alien-cyan);
+    color: var(--alien-cyan);
+    box-shadow: var(--glow-cyan);
+  }
+
+  /* category colors */
+  .effect-btn[data-cat="danger"]:hover, .effect-btn[data-cat="danger"].active {
+    border-color: var(--alien-red);
+    color: var(--alien-red);
+    box-shadow: var(--glow-red);
+  }
+  .effect-btn[data-cat="magic"]:hover, .effect-btn[data-cat="magic"].active {
+    border-color: var(--alien-purple);
+    color: #d966ff;
+    box-shadow: 0 0 20px rgba(191,0,255,0.4);
+  }
+  .effect-btn[data-cat="alien"]:hover, .effect-btn[data-cat="alien"].active {
+    border-color: var(--alien-cyan);
+    color: var(--alien-cyan);
+    box-shadow: var(--glow-cyan);
+  }
+  .effect-btn[data-cat="orange"]:hover, .effect-btn[data-cat="orange"].active {
+    border-color: var(--alien-orange);
+    color: var(--alien-orange);
+    box-shadow: 0 0 20px rgba(255,102,0,0.4);
+  }
+
+  /* CENTER MIRROR */
+  .mirror-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    gap: 15px;
+  }
+
+  .mirror-container {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 4/3;
+  }
+
+  /* Alien frame */
+  .mirror-frame {
+    position: absolute;
+    inset: -3px;
+    border: 2px solid var(--alien-green);
+    box-shadow: var(--glow), inset var(--glow);
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  .mirror-frame::before, .mirror-frame::after {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border: 1px solid rgba(0,255,136,0.15);
+  }
+
+  .mirror-frame::after { inset: -16px; border-color: rgba(0,255,136,0.07); }
+
+  /* Corner decorations */
+  .corner {
+    position: absolute;
+    width: 20px; height: 20px;
+    z-index: 21;
+    pointer-events: none;
+  }
+  .corner::before, .corner::after {
+    content: '';
+    position: absolute;
+    background: var(--alien-cyan);
+    box-shadow: 0 0 8px var(--alien-cyan);
+  }
+  .corner::before { width: 100%; height: 2px; top: 0; left: 0; }
+  .corner::after { width: 2px; height: 100%; top: 0; left: 0; }
+  .corner.tl { top: -3px; left: -3px; }
+  .corner.tr { top: -3px; right: -3px; transform: scaleX(-1); }
+  .corner.bl { bottom: -3px; left: -3px; transform: scaleY(-1); }
+  .corner.br { bottom: -3px; right: -3px; transform: scale(-1); }
+
+  video#mirror {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+    display: block;
+  }
+
+  canvas#overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Scan line effect */
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,255,136,0.015) 2px,
+      rgba(0,255,136,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 15;
+    animation: scanMove 8s linear infinite;
+  }
+
+  @keyframes scanMove {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+  }
+
+  /* Moving scan beam */
+  .scan-beam {
+    position: absolute;
+    left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(0,255,136,0.4), transparent);
+    z-index: 16;
+    pointer-events: none;
+    animation: beamSweep 3s ease-in-out infinite;
+    box-shadow: 0 0 15px rgba(0,255,136,0.3);
+  }
+
+  @keyframes beamSweep {
+    0% { top: -5px; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { top: calc(100% + 5px); opacity: 0; }
+  }
+
+  /* Permission screen */
+  #permission-screen {
+    position: absolute;
+    inset: 0;
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    z-index: 30;
+    border: 1px solid var(--border);
+  }
+
+  #permission-screen .cam-icon {
+    font-size: 4rem;
+    animation: camPulse 2s infinite;
+  }
+
+  @keyframes camPulse {
+    0%,100% { filter: drop-shadow(0 0 10px var(--alien-green)); }
+    50% { filter: drop-shadow(0 0 30px var(--alien-green)) drop-shadow(0 0 60px rgba(0,255,136,0.3)); }
+  }
+
+  .start-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.3em;
+    padding: 14px 35px;
+    background: transparent;
+    border: 1px solid var(--alien-green);
+    color: var(--alien-green);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .start-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0,255,136,0.2), transparent);
+    transition: left 0.4s;
+  }
+
+  .start-btn:hover {
+    box-shadow: var(--glow);
+    background: rgba(0,255,136,0.08);
+  }
+
+  .start-btn:hover::before { left: 100%; }
+
+  /* CONTROLS */
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .ctrl-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    padding: 8px 16px;
+    background: transparent;
+    border: 1px solid rgba(0,229,255,0.3);
+    color: var(--alien-cyan);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .ctrl-btn:hover {
+    border-color: var(--alien-cyan);
+    box-shadow: var(--glow-cyan);
+    background: rgba(0,229,255,0.08);
+  }
+
+  .ctrl-btn.danger {
+    border-color: rgba(255,0,60,0.3);
+    color: var(--alien-red);
+  }
+
+  .ctrl-btn.danger:hover {
+    border-color: var(--alien-red);
+    box-shadow: var(--glow-red);
+    background: rgba(255,0,60,0.08);
+  }
+
+  /* INTENSITY SLIDER */
+  .intensity-section {
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .intensity-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: rgba(0,255,136,0.6);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  input[type=range] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 2px;
+    background: rgba(0,255,136,0.2);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--alien-green);
+    box-shadow: 0 0 10px var(--alien-green);
+    cursor: pointer;
+  }
+
+  /* RIGHT PANEL: Stats / info */
+  .data-block {
+    background: rgba(0,229,255,0.03);
+    border: 1px solid rgba(0,229,255,0.1);
+    padding: 10px;
+    border-radius: 2px;
+  }
+
+  .data-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    color: rgba(0,229,255,0.5);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .data-value {
+    font-size: 0.85rem;
+    color: var(--alien-cyan);
+    text-shadow: var(--glow-cyan);
+  }
+
+  .data-value.active-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    color: var(--alien-green);
+    text-shadow: var(--glow);
+    min-height: 1.2em;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .hex-display {
+    font-size: 0.6rem;
+    color: rgba(0,255,136,0.4);
+    line-height: 1.8;
+    overflow: hidden;
+    height: 90px;
+    word-break: break-all;
+  }
+
+  .bar-meter {
+    margin-top: 5px;
+  }
+
+  .bar-track {
+    height: 3px;
+    background: rgba(0,255,136,0.1);
+    margin-bottom: 4px;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--alien-green);
+    box-shadow: 0 0 6px var(--alien-green);
+    transition: width 0.3s;
+  }
+
+  .bar-label {
+    font-size: 0.5rem;
+    color: rgba(0,255,136,0.5);
+    letter-spacing: 0.15em;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    .main {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
+    }
+    .side-panel {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .side-panel.right {
+      border-left: none;
+      border-top: 1px solid var(--border);
+    }
+    .effects-grid { grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* Capture flash */
+  @keyframes flashCapture {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  .flash-overlay {
+    position: fixed;
+    inset: 0;
+    background: white;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+  }
+
+  .flash-overlay.flash { animation: flashCapture 0.5s ease; }
+
+  /* Active effect glow on mirror */
+  .mirror-container.has-effect .mirror-frame {
+    animation: frameGlow 2s ease-in-out infinite;
+  }
+
+  @keyframes frameGlow {
+    0%,100% { box-shadow: var(--glow), inset var(--glow); }
+    50% { box-shadow: 0 0 40px rgba(0,255,136,0.6), 0 0 80px rgba(0,255,136,0.2), inset 0 0 30px rgba(0,255,136,0.08); }
+  }
+
+  .loading-indicator {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--alien-orange);
+    text-align: center;
+    animation: loadBlink 0.7s infinite;
+    display: none;
+  }
+
+  .loading-indicator.visible { display: block; }
+
+  @keyframes loadBlink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.2; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="flash-overlay" id="flashOverlay"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">SPECTER<span>•</span>MIRROR</div>
+  <div class="subtitle">Xenomorphic Halloween Interface v4.2.0 — Biometric Overlay System</div>
+</header>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div><span class="status-dot"></span>SYSTEM ONLINE</div>
+  <div id="statusEffect">OVERLAY: NONE</div>
+  <div id="statusTime">--:--:--</div>
+  <div id="statusFPS">FPS: --</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- LEFT PANEL: Halloween Effects -->
+  <div class="side-panel">
+    <div class="panel-title">// Halloween Entities</div>
+    <div class="effects-grid" id="effectsGrid">
+      <button class="effect-btn" data-effect="wizard" data-cat="magic" onclick="setEffect('wizard')">
+        <span class="icon">🧙</span>WIZARD
+      </button>
+      <button class="effect-btn" data-effect="witch" data-cat="magic" onclick="setEffect('witch')">
+        <span class="icon">🧙‍♀️</span>WITCH
+      </button>
+      <button class="effect-btn" data-effect="pumpkin" data-cat="orange" onclick="setEffect('pumpkin')">
+        <span class="icon">🎃</span>PUMPKIN
+      </button>
+      <button class="effect-btn" data-effect="chucky" data-cat="danger" onclick="setEffect('chucky')">
+        <span class="icon">🪆</span>CHUCKY
+      </button>
+      <button class="effect-btn" data-effect="smiley" data-cat="danger" onclick="setEffect('smiley')">
+        <span class="icon">😀</span>SMILEY
+      </button>
+      <button class="effect-btn" data-effect="joker" data-cat="danger" onclick="setEffect('joker')">
+        <span class="icon">🃏</span>JOKER
+      </button>
+      <button class="effect-btn" data-effect="shrek" data-cat="orange" onclick="setEffect('shrek')">
+        <span class="icon">🧟</span>SHREK
+      </button>
+      <button class="effect-btn" data-effect="skull" data-cat="danger" onclick="setEffect('skull')">
+        <span class="icon">💀</span>SKULL
+      </button>
+    </div>
+    <div class="panel-title" style="margin-top:5px">// Alien Entities</div>
+    <div class="effects-grid">
+      <button class="effect-btn" data-effect="alien" data-cat="alien" onclick="setEffect('alien')">
+        <span class="icon">👽</span>XENOMORPH
+      </button>
+      <button class="effect-btn" data-effect="predator" data-cat="alien" onclick="setEffect('predator')">
+        <span class="icon">🦂</span>PREDATOR
+      </button>
+      <button class="effect-btn" data-effect="cyborg" data-cat="alien" onclick="setEffect('cyborg')">
+        <span class="icon">🤖</span>CYBORG
+      </button>
+      <button class="effect-btn" data-effect="demon" data-cat="danger" onclick="setEffect('demon')">
+        <span class="icon">😈</span>DEMON
+      </button>
+      <button class="effect-btn" data-effect="zombie" data-cat="danger" onclick="setEffect('zombie')">
+        <span class="icon">🧟</span>ZOMBIE
+      </button>
+    </div>
+    <div class="intensity-section">
+      <div class="intensity-label">
+        <span>// EFFECT INTENSITY</span>
+        <span id="intensityVal">75%</span>
+      </div>
+      <input type="range" id="intensitySlider" min="10" max="100" value="75" oninput="updateIntensity(this.value)">
+    </div>
+  </div>
+
+  <!-- CENTER: Mirror -->
+  <div class="mirror-center">
+    <div class="mirror-container" id="mirrorContainer">
+      <!-- Alien frame corners -->
+      <div class="corner tl"></div>
+      <div class="corner tr"></div>
+      <div class="corner bl"></div>
+      <div class="corner br"></div>
+      <div class="mirror-frame"></div>
+      <div class="scanlines"></div>
+      <div class="scan-beam"></div>
+
+      <video id="mirror" autoplay muted playsinline></video>
+      <canvas id="overlay"></canvas>
+
+      <!-- Permission screen -->
+      <div id="permission-screen">
+        <div class="cam-icon">🛸</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:0.9rem;letter-spacing:0.2em;text-align:center;color:var(--alien-green);text-shadow:var(--glow);">BIOMETRIC SCANNER</div>
+        <div style="font-size:0.65rem;letter-spacing:0.2em;color:rgba(0,255,136,0.5);text-align:center;max-width:280px;line-height:1.8;">ALIEN INTELLIGENCE DETECTED.<br>INITIALIZE FACIAL ANALYSIS PROTOCOL?</div>
+        <button class="start-btn" onclick="initCamera()">⬡ ACTIVATE SCANNER ⬡</button>
+        <div style="font-size:0.55rem;color:rgba(0,255,136,0.25);letter-spacing:0.2em">CAMERA ACCESS REQUIRED</div>
+      </div>
+    </div>
+
+    <div class="loading-indicator" id="loadingIndicator">⟳ CALIBRATING FACIAL MESH...</div>
+
+    <div class="controls-row">
+      <button class="ctrl-btn" onclick="capturePhoto()">📸 CAPTURE</button>
+      <button class="ctrl-btn" onclick="cycleEffect()">⟳ CYCLE ENTITY</button>
+      <button class="ctrl-btn danger" onclick="clearEffect()">✕ CLEAR OVERLAY</button>
+      <button class="ctrl-btn" onclick="toggleMirror()">⟲ FLIP</button>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Data / Stats -->
+  <div class="side-panel right">
+    <div class="panel-title">// Entity Analysis</div>
+    <div class="data-block">
+      <div class="data-label">Active Overlay</div>
+      <div class="data-value active-name" id="activeEffectName">-- NONE --</div>
+    </div>
+    <div class="data-block">
+      <div class="data-label">Biometric Status</div>
+      <div class="data-value" id="bioStatus" style="font-size:0.7rem;color:rgba(0,255,136,0.5)">AWAITING SIGNAL</div>
+    </div>
+    <div class="data-block">
+      <div class="data-label">Signal Metrics</div>
+      <div class="bar-meter">
+        <div class="bar-label"><span>THREAT LVL</span><span id="threatVal">0%</span></div>
+        <div class="bar-track"><div class="bar-fill" id="threatBar" style="width:0%;background:var(--alien-red);box-shadow:0 0 6px var(--alien-red)"></div></div>
+        <div class="bar-label"><span>ALIEN DNA</span><span id="alienVal">0%</span></div>
+        <div class="bar-track"><div class="bar-fill" id="alienBar" style="width:0%;background:var(--alien-cyan);box-shadow:0 0 6px var(--alien-cyan)"></div></div>
+        <div class="bar-label"><span>DARK MAGIC</span><span id="magicVal">0%</span></div>
+        <div class="bar-track"><div class="bar-fill" id="magicBar" style="width:0%;background:var(--alien-purple);box-shadow:0 0 6px var(--alien-purple)"></div></div>
+      </div>
+    </div>
+    <div class="data-block">
+      <div class="data-label">Quantum Signature</div>
+      <div class="hex-display" id="hexDisplay">-- AWAITING LINK --</div>
+    </div>
+    <div class="panel-title" style="margin-top:5px">// Transmission Log</div>
+    <div style="font-size:0.55rem;line-height:1.9;color:rgba(0,255,136,0.35)" id="logPanel">
+      > SYSTEM BOOT...<br>
+      > SPECTER MIRROR v4.2.0<br>
+      > XENOMORPHIC CORE LOADED<br>
+      > AWAITING BIOMETRIC INPUT...<br>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================
+// SPECTER MIRROR — Core System
+// ============================
+
+let currentEffect = null;
+let effectIntensity = 0.75;
+let mirrorFlipped = false;
+let faceRect = null;
+let animFrame = null;
+let fpsCount = 0, lastFPSTime = Date.now();
+let effectIndex = -1;
+let hexInterval = null;
+let cameraActive = false;
+
+const video = document.getElementById('mirror');
+const canvas = document.getElementById('overlay');
+const ctx = canvas.getContext('2d');
+
+// Effect metadata
+const effects = {
+  wizard: { name: 'ARCANE WIZARD', cat: 'magic', threat: 20, alien: 5, magic: 90 },
+  witch: { name: 'DARK WITCH', cat: 'magic', threat: 35, alien: 10, magic: 95 },
+  pumpkin: { name: 'JACK-O-LANTERN', cat: 'orange', threat: 45, alien: 15, magic: 60 },
+  chucky: { name: 'CHUCKY DOLL', cat: 'danger', threat: 95, alien: 5, magic: 40 },
+  smiley: { name: 'SMILEY FACE', cat: 'danger', threat: 85, alien: 20, magic: 30 },
+  joker: { name: 'THE JOKER', cat: 'danger', threat: 90, alien: 15, magic: 50 },
+  shrek: { name: 'OGRE LORD', cat: 'orange', threat: 30, alien: 25, magic: 20 },
+  skull: { name: 'DEATH SKULL', cat: 'danger', threat: 80, alien: 30, magic: 70 },
+  alien: { name: 'XENOMORPH-X', cat: 'alien', threat: 75, alien: 99, magic: 45 },
+  predator: { name: 'PREDATOR CLASS', cat: 'alien', threat: 88, alien: 95, magic: 30 },
+  cyborg: { name: 'CYBORG UNIT', cat: 'alien', threat: 60, alien: 80, magic: 15 },
+  demon: { name: 'INFERNAL DEMON', cat: 'danger', threat: 99, alien: 40, magic: 100 },
+  zombie: { name: 'UNDEAD ENTITY', cat: 'danger', threat: 70, alien: 20, magic: 55 },
+};
+
+const effectKeys = Object.keys(effects);
+
+function addLog(msg) {
+  const log = document.getElementById('logPanel');
+  const time = new Date().toLocaleTimeString('en',{hour12:false});
+  log.innerHTML += `> [${time}] ${msg}<br>`;
+  log.scrollTop = log.scrollHeight;
+  // Keep log short
+  const lines = log.innerHTML.split('<br>');
+  if (lines.length > 20) log.innerHTML = lines.slice(-15).join('<br>');
+}
+
+// Time display
+setInterval(() => {
+  document.getElementById('statusTime').textContent = new Date().toLocaleTimeString('en',{hour12:false});
+}, 1000);
+
+// Hex display animation
+function startHexAnim() {
+  clearInterval(hexInterval);
+  hexInterval = setInterval(() => {
+    const chars = '0123456789ABCDEF';
+    let hex = '';
+    for (let i=0; i<120; i++) hex += chars[Math.floor(Math.random()*chars.length)] + (i%8===7?' ':'');
+    document.getElementById('hexDisplay').textContent = hex;
+  }, 120);
+}
+
+function stopHexAnim() {
+  clearInterval(hexInterval);
+  document.getElementById('hexDisplay').textContent = '-- SIGNAL LOST --';
+}
+
+// Camera init
+async function initCamera() {
+  try {
+    addLog('REQUESTING CAMERA ACCESS...');
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode:'user', width:1280, height:720 }, audio:false });
+    video.srcObject = stream;
+    video.onloadedmetadata = () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      document.getElementById('permission-screen').style.display = 'none';
+      cameraActive = true;
+      addLog('CAMERA LINK ESTABLISHED');
+      addLog('FACIAL MESH CALIBRATING...');
+      document.getElementById('bioStatus').textContent = 'LIVE — SCANNING';
+      document.getElementById('bioStatus').style.color = 'var(--alien-green)';
+      startHexAnim();
+      renderLoop();
+    };
+  } catch(e) {
+    addLog('ERROR: CAMERA ACCESS DENIED');
+    document.querySelector('#permission-screen .cam-icon').textContent = '⚠️';
+    document.getElementById('bioStatus').textContent = 'ACCESS DENIED';
+  }
+}
+
+function updateIntensity(val) {
+  effectIntensity = val/100;
+  document.getElementById('intensityVal').textContent = val + '%';
+}
+
+function setEffect(name) {
+  currentEffect = name;
+  document.querySelectorAll('.effect-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.effect === name);
+  });
+  document.getElementById('activeEffectName').textContent = effects[name]?.name || name.toUpperCase();
+  document.getElementById('statusEffect').textContent = 'OVERLAY: ' + (effects[name]?.name || name.toUpperCase());
+  document.getElementById('mirrorContainer').classList.add('has-effect');
+
+  const ef = effects[name];
+  if (ef) {
+    animateMeter('threatBar', 'threatVal', ef.threat);
+    animateMeter('alienBar', 'alienVal', ef.alien);
+    animateMeter('magicBar', 'magicVal', ef.magic);
+  }
+  addLog(`ENTITY LOADED: ${effects[name]?.name}`);
+}
+
+function animateMeter(barId, valId, target) {
+  let current = 0;
+  const step = target / 30;
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    document.getElementById(barId).style.width = current + '%';
+    document.getElementById(valId).textContent = Math.round(current) + '%';
+    if (current >= target) clearInterval(timer);
+  }, 20);
+}
+
+function clearEffect() {
+  currentEffect = null;
+  document.querySelectorAll('.effect-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('activeEffectName').textContent = '-- NONE --';
+  document.getElementById('statusEffect').textContent = 'OVERLAY: NONE';
+  document.getElementById('mirrorContainer').classList.remove('has-effect');
+  ['threatBar','alienBar','magicBar'].forEach(id => document.getElementById(id).style.width = '0%');
+  ['threatVal','alienVal','magicVal'].forEach(id => document.getElementById(id).textContent = '0%');
+  addLog('OVERLAY CLEARED');
+  if (cameraActive) ctx.clearRect(0,0,canvas.width,canvas.height);
+}
+
+function cycleEffect() {
+  effectIndex = (effectIndex + 1) % effectKeys.length;
+  setEffect(effectKeys[effectIndex]);
+}
+
+function toggleMirror() {
+  mirrorFlipped = !mirrorFlipped;
+  video.style.transform = mirrorFlipped ? 'none' : 'scaleX(-1)';
+}
+
+function capturePhoto() {
+  const captureCanvas = document.createElement('canvas');
+  captureCanvas.width = canvas.width;
+  captureCanvas.height = canvas.height;
+  const cCtx = captureCanvas.getContext('2d');
+  if (!mirrorFlipped) { cCtx.translate(canvas.width, 0); cCtx.scale(-1, 1); }
+  cCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  if (!mirrorFlipped) { cCtx.setTransform(1,0,0,1,0,0); }
+  cCtx.drawImage(canvas, 0, 0);
+
+  const flash = document.getElementById('flashOverlay');
+  flash.classList.remove('flash');
+  void flash.offsetWidth;
+  flash.classList.add('flash');
+
+  const link = document.createElement('a');
+  link.download = `specter-mirror-${Date.now()}.png`;
+  link.href = captureCanvas.toDataURL('image/png');
+  link.click();
+  addLog('BIOMETRIC CAPTURE COMPLETE');
+}
+
+// ============================
+// RENDER LOOP — Effect Drawing
+// ============================
+
+let t = 0; // time counter
+function renderLoop() {
+  fpsCount++;
+  const now = Date.now();
+  if (now - lastFPSTime > 1000) {
+    document.getElementById('statusFPS').textContent = 'FPS: ' + fpsCount;
+    fpsCount = 0;
+    lastFPSTime = now;
+  }
+
+  t += 0.04;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (currentEffect && canvas.width > 0) {
+    // Simulate face position (centered, reasonable size)
+    const fw = canvas.width * 0.45;
+    const fh = canvas.height * 0.6;
+    const fx = canvas.width * 0.5;
+    const fy = canvas.height * 0.42;
+
+    drawEffect(currentEffect, fx, fy, fw, fh);
+  }
+
+  // Always draw alien HUD overlay
+  drawHUD();
+
+  animFrame = requestAnimationFrame(renderLoop);
+}
+
+function drawHUD() {
+  const w = canvas.width, h = canvas.height;
+  const a = effectIntensity;
+
+  // Corner brackets
+  const cs = 40;
+  ctx.strokeStyle = `rgba(0,255,136,${0.5 * a})`;
+  ctx.lineWidth = 2;
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = 'rgba(0,255,136,0.5)';
+
+  const corners = [[0,0,1,1],[w,0,-1,1],[0,h,1,-1],[w,h,-1,-1]];
+  corners.forEach(([x,y,dx,dy]) => {
+    ctx.beginPath();
+    ctx.moveTo(x+dx*cs, y);
+    ctx.lineTo(x, y);
+    ctx.lineTo(x, y+dy*cs);
+    ctx.stroke();
+  });
+
+  // Target crosshair center
+  const cx = w/2, cy = h*0.42;
+  ctx.strokeStyle = `rgba(0,229,255,${0.25 * a})`;
+  ctx.lineWidth = 1;
+  ctx.shadowColor = 'rgba(0,229,255,0.3)';
+  ctx.beginPath(); ctx.moveTo(cx-30,cy); ctx.lineTo(cx+30,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,cy-30); ctx.lineTo(cx,cy+30); ctx.stroke();
+
+  // Rotating scan circle
+  ctx.strokeStyle = `rgba(0,229,255,${0.15 * a})`;
+  ctx.lineWidth = 1;
+  ctx.shadowBlur = 0;
+  ctx.beginPath();
+  ctx.arc(cx, cy, h*0.25, 0, Math.PI*2);
+  ctx.stroke();
+
+  // Pulsing circle
+  const pr = h*0.25 + Math.sin(t*2)*8;
+  ctx.strokeStyle = `rgba(0,255,136,${0.1 * a * (0.5+0.5*Math.sin(t*2))})`;
+  ctx.beginPath();
+  ctx.arc(cx, cy, pr, 0, Math.PI*2);
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+}
+
+// ============================
+// EFFECT DRAWING FUNCTIONS
+// ============================
+
+function drawEffect(name, cx, cy, fw, fh, custom) {
+  const alpha = effectIntensity;
+  ctx.save();
+
+  switch(name) {
+    case 'wizard': drawWizard(cx, cy, fw, fh, alpha); break;
+    case 'witch': drawWitch(cx, cy, fw, fh, alpha); break;
+    case 'pumpkin': drawPumpkin(cx, cy, fw, fh, alpha); break;
+    case 'chucky': drawChucky(cx, cy, fw, fh, alpha); break;
+    case 'smiley': drawSmiley(cx, cy, fw, fh, alpha); break;
+    case 'joker': drawJoker(cx, cy, fw, fh, alpha); break;
+    case 'shrek': drawShrek(cx, cy, fw, fh, alpha); break;
+    case 'skull': drawSkull(cx, cy, fw, fh, alpha); break;
+    case 'alien': drawAlien(cx, cy, fw, fh, alpha); break;
+    case 'predator': drawPredator(cx, cy, fw, fh, alpha); break;
+    case 'cyborg': drawCyborg(cx, cy, fw, fh, alpha); break;
+    case 'demon': drawDemon(cx, cy, fw, fh, alpha); break;
+    case 'zombie': drawZombie(cx, cy, fw, fh, alpha); break;
+  }
+
+  ctx.restore();
+}
+
+function setGlow(color, blur=15) {
+  ctx.shadowBlur = blur;
+  ctx.shadowColor = color;
+}
+
+// WIZARD — Blue pointed hat + sparkles + stars
+function drawWizard(cx, cy, fw, fh, a) {
+  const s = fw * 0.5;
+  const hatTip = cy - fh*0.6;
+  const hatBase = cy - fh*0.15;
+
+  // Pointed hat
+  ctx.globalAlpha = a;
+  setGlow('rgba(100,0,255,0.8)', 20);
+  const hatGrad = ctx.createLinearGradient(cx-s*0.8, hatBase, cx, hatTip);
+  hatGrad.addColorStop(0, '#1a0066');
+  hatGrad.addColorStop(1, '#6600cc');
+  ctx.fillStyle = hatGrad;
+  ctx.beginPath();
+  ctx.moveTo(cx, hatTip - 20);
+  ctx.lineTo(cx + s*0.8, hatBase);
+  ctx.lineTo(cx - s*0.8, hatBase);
+  ctx.closePath();
+  ctx.fill();
+
+  // Hat brim
+  ctx.fillStyle = '#330099';
+  ctx.beginPath();
+  ctx.ellipse(cx, hatBase, s, s*0.15, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Star band
+  ctx.strokeStyle = '#ffdd00';
+  ctx.lineWidth = 2;
+  setGlow('#ffdd00', 15);
+  for(let i=0; i<6; i++) {
+    const sx = cx - s*0.6 + i*s*0.24;
+    const sy = hatBase - 15;
+    drawStar(sx, sy, 5, 3, '#ffdd00', a);
+  }
+
+  // Floating sparkles
+  for(let i=0; i<8; i++) {
+    const angle = (i/8)*Math.PI*2 + t;
+    const r = s*0.9;
+    const sx = cx + Math.cos(angle)*r;
+    const sy = hatBase - fh*0.3 + Math.sin(angle)*r*0.4;
+    const pulse = 0.5 + 0.5*Math.sin(t*3 + i);
+    drawStar(sx, sy, 6*pulse, 3*pulse, '#aaccff', a*pulse);
+  }
+
+  // Eyes glow
+  const ey = cy + fh*0.05;
+  drawGlowEyes(cx, ey, fw, '#9900ff', a, 'almond');
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// WITCH — Green skin + black hat + bubbling
+function drawWitch(cx, cy, fw, fh, a) {
+  const s = fw*0.5;
+  const hatBase = cy - fh*0.12;
+
+  ctx.globalAlpha = a;
+
+  // Green face tint
+  const faceGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.45);
+  faceGrad.addColorStop(0, 'rgba(80,180,60,0.45)');
+  faceGrad.addColorStop(1, 'rgba(30,100,20,0)');
+  ctx.fillStyle = faceGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, fw*0.45, fh*0.55, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Black pointy hat
+  setGlow('rgba(100,200,0,0.4)', 15);
+  ctx.fillStyle = '#0d0d0d';
+  ctx.beginPath();
+  ctx.moveTo(cx+5, hatBase - fh*0.6);
+  ctx.lineTo(cx + s*0.75, hatBase);
+  ctx.lineTo(cx - s*0.75, hatBase);
+  ctx.closePath();
+  ctx.fill();
+
+  // Purple band
+  ctx.fillStyle = '#660099';
+  ctx.fillRect(cx - s*0.75, hatBase - 18, s*1.5, 14);
+
+  // Hat brim wider
+  ctx.fillStyle = '#111';
+  ctx.beginPath();
+  ctx.ellipse(cx, hatBase, s*0.95, s*0.13, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Bubbles floating
+  for(let i=0; i<5; i++) {
+    const bx = cx - s*0.5 + (i/4)*s;
+    const phase = (t*0.8 + i*1.2) % (Math.PI*2);
+    const by = hatBase + 30 + Math.sin(phase)*15;
+    const br = 4 + i*2;
+    ctx.strokeStyle = `rgba(80,255,80,${a*0.6})`;
+    ctx.lineWidth = 1;
+    setGlow('rgba(0,255,0,0.5)', 8);
+    ctx.beginPath();
+    ctx.arc(bx, by, br, 0, Math.PI*2);
+    ctx.stroke();
+  }
+
+  // Glowing green eyes
+  drawGlowEyes(cx, cy + fh*0.06, fw, '#00ff44', a, 'cat');
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// PUMPKIN — Orange head overlay
+function drawPumpkin(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+  setGlow('rgba(255,100,0,0.8)', 25);
+
+  // Pumpkin body segments
+  const segments = 5;
+  const pw = fw*0.5;
+  const ph = fh*0.55;
+  for(let i=0; i<segments; i++) {
+    const sx = cx - pw + (i/(segments-1))*pw*2;
+    const sw = pw * 0.5;
+    const grad = ctx.createRadialGradient(sx, cy, 0, sx, cy, sw);
+    grad.addColorStop(0, `rgba(255,140,0,0.65)`);
+    grad.addColorStop(0.7, `rgba(200,70,0,0.45)`);
+    grad.addColorStop(1, 'rgba(100,30,0,0)');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.ellipse(sx, cy, sw, ph, 0, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  // Stem
+  ctx.fillStyle = 'rgba(50,120,20,0.8)';
+  ctx.fillRect(cx-6, cy - ph - 25, 12, 28);
+  ctx.fillStyle = 'rgba(50,140,20,0.7)';
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - ph - 20);
+  ctx.bezierCurveTo(cx+30, cy-ph-50, cx+50, cy-ph-30, cx+35, cy-ph-10);
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = 'rgba(50,150,20,0.6)';
+  setGlow('rgba(0,200,0,0.3)', 8);
+  ctx.stroke();
+
+  // Triangle eyes
+  setGlow('rgba(255,200,0,0.8)', 15);
+  ctx.fillStyle = `rgba(255,200,0,${a*0.9})`;
+  const ey = cy - fh*0.05;
+  const ex1 = cx - fw*0.18, ex2 = cx + fw*0.18;
+  drawTriangle(ex1, ey, fw*0.1, fw*0.08);
+  drawTriangle(ex2, ey, fw*0.1, fw*0.08);
+
+  // Jagged mouth
+  setGlow('rgba(255,200,0,0.8)', 12);
+  ctx.strokeStyle = `rgba(255,200,0,${a*0.9})`;
+  ctx.lineWidth = 3;
+  const my = cy + fh*0.18;
+  ctx.beginPath();
+  ctx.moveTo(cx - fw*0.22, my);
+  for(let i=0; i<6; i++) {
+    ctx.lineTo(cx - fw*0.22 + i*fw*0.073, my + (i%2===0?0:fw*0.07));
+  }
+  ctx.stroke();
+
+  // Glow from inside
+  const innerGrad = ctx.createRadialGradient(cx, cy+fh*0.05, 0, cx, cy+fh*0.05, fw*0.35);
+  innerGrad.addColorStop(0, `rgba(255,150,0,${a*0.25})`);
+  innerGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = innerGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy+fh*0.05, fw*0.35, fh*0.35, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// CHUCKY — Stitches, doll lines, scarred smile
+function drawChucky(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+
+  // Scar lines on face
+  setGlow('rgba(200,0,0,0.8)', 10);
+  ctx.strokeStyle = `rgba(180,40,0,${a*0.85})`;
+  ctx.lineWidth = 3;
+
+  // Vertical scar
+  ctx.beginPath();
+  ctx.moveTo(cx + fw*0.1, cy - fh*0.3);
+  ctx.bezierCurveTo(cx+fw*0.12, cy, cx+fw*0.08, cy+fh*0.1, cx+fw*0.1, cy+fh*0.25);
+  ctx.stroke();
+
+  // Stitches
+  ctx.strokeStyle = `rgba(220,80,0,${a*0.9})`;
+  ctx.lineWidth = 2;
+  for(let i=0; i<7; i++) {
+    const sy = cy - fh*0.25 + i*(fh*0.5/6);
+    ctx.beginPath();
+    ctx.moveTo(cx + fw*0.05, sy);
+    ctx.lineTo(cx + fw*0.16, sy);
+    ctx.stroke();
+  }
+
+  // Crazed eyes
+  ctx.fillStyle = `rgba(255,50,50,${a*0.9})`;
+  setGlow('rgba(255,0,0,0.9)', 15);
+  [-1,1].forEach(side => {
+    const ex = cx + side*fw*0.18;
+    const ey = cy - fh*0.04;
+    ctx.beginPath();
+    ctx.arc(ex, ey, fw*0.08, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(0,0,0,0.9)';
+    ctx.beginPath();
+    ctx.arc(ex+side*2, ey, fw*0.04, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = `rgba(255,50,50,${a*0.9})`;
+  });
+
+  // Deranged smile
+  setGlow('rgba(200,0,0,0.8)', 12);
+  ctx.strokeStyle = `rgba(180,20,0,${a*0.9})`;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(cx, cy + fh*0.1, fw*0.2, 0.2, Math.PI-0.2);
+  ctx.stroke();
+
+  // Teeth
+  ctx.fillStyle = `rgba(240,230,200,${a*0.8})`;
+  for(let i=0; i<5; i++) {
+    const tx = cx - fw*0.15 + i*fw*0.075;
+    ctx.fillRect(tx, cy + fh*0.1, fw*0.055, fh*0.06);
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// SMILEY — Neon yellow acid face
+function drawSmiley(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+
+  // Yellow face
+  const pulse = 0.85 + 0.15*Math.sin(t*4);
+  setGlow(`rgba(255,220,0,0.7)`, 30);
+  const faceGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.48);
+  faceGrad.addColorStop(0, `rgba(255,230,0,0.55)`);
+  faceGrad.addColorStop(0.7, `rgba(200,170,0,0.35)`);
+  faceGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = faceGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, fw*0.48, fh*0.55, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Dot eyes
+  ctx.fillStyle = `rgba(0,0,0,${a*0.9})`;
+  setGlow('rgba(0,0,0,0.5)', 5);
+  [-1,1].forEach(side => {
+    ctx.beginPath();
+    ctx.arc(cx + side*fw*0.15, cy - fh*0.05, fw*0.07, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // Big grin
+  setGlow('rgba(0,0,0,0.5)', 5);
+  ctx.strokeStyle = `rgba(0,0,0,${a*0.9})`;
+  ctx.lineWidth = fw*0.04;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.arc(cx, cy + fh*0.05, fw*0.22, 0.25, Math.PI - 0.25);
+  ctx.stroke();
+
+  // Acidic drips
+  ctx.fillStyle = `rgba(200,255,0,${a*0.6})`;
+  setGlow('rgba(200,255,0,0.6)', 10);
+  for(let i=0; i<4; i++) {
+    const dx = cx - fw*0.3 + i*fw*0.2;
+    const dlen = (20 + i*12) + Math.sin(t*2+i)*8;
+    ctx.beginPath();
+    ctx.arc(dx, cy + fh*0.5 + dlen, 5, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillRect(dx-2, cy + fh*0.48, 4, dlen);
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// JOKER — White face, red smile, green hair
+function drawJoker(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+
+  // White face powder
+  const wGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.48);
+  wGrad.addColorStop(0, 'rgba(255,255,255,0.5)');
+  wGrad.addColorStop(0.8, 'rgba(200,200,200,0.3)');
+  wGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = wGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, fw*0.48, fh*0.55, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Green hair wisps at top
+  setGlow('rgba(0,180,0,0.6)', 15);
+  ctx.strokeStyle = `rgba(0,200,0,${a*0.8})`;
+  ctx.lineWidth = 4;
+  for(let i=0; i<7; i++) {
+    const hx = cx - fw*0.4 + i*fw*0.133;
+    ctx.beginPath();
+    ctx.moveTo(hx, cy - fh*0.4);
+    ctx.bezierCurveTo(hx + (i-3)*10, cy - fh*0.6 - 20, hx+(i-3)*5, cy-fh*0.7-10, hx+(i-3.5)*20, cy - fh*0.8);
+    ctx.stroke();
+  }
+
+  // Dark eye shadows
+  ctx.fillStyle = `rgba(30,0,30,${a*0.65})`;
+  ctx.shadowBlur = 0;
+  [-1,1].forEach(side => {
+    ctx.beginPath();
+    ctx.ellipse(cx + side*fw*0.17, cy - fh*0.04, fw*0.13, fw*0.1, 0, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // Yellow eyes
+  setGlow('rgba(255,200,0,0.9)', 15);
+  ctx.fillStyle = `rgba(255,200,0,${a*0.9})`;
+  [-1,1].forEach(side => {
+    ctx.beginPath();
+    ctx.ellipse(cx + side*fw*0.17, cy - fh*0.04, fw*0.07, fw*0.065, 0, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // Red rictus grin — extended past lips
+  setGlow('rgba(255,0,0,0.9)', 20);
+  const griny = cy + fh*0.12;
+  const grinw = fw*0.35;
+
+  ctx.fillStyle = `rgba(200,0,0,${a*0.9})`;
+  ctx.beginPath();
+  ctx.moveTo(cx - grinw, griny);
+  ctx.quadraticCurveTo(cx, griny + fh*0.12, cx + grinw, griny);
+  ctx.quadraticCurveTo(cx, griny - fh*0.04, cx - grinw, griny);
+  ctx.fill();
+
+  // White teeth
+  ctx.fillStyle = `rgba(255,255,255,${a*0.9})`;
+  for(let i=0; i<6; i++) {
+    const tx = cx - grinw*0.7 + i*(grinw*1.4/5);
+    ctx.fillRect(tx, griny - 5, grinw*1.4/5 - 2, 15);
+  }
+
+  // Scar lines extending smile
+  ctx.strokeStyle = `rgba(180,0,0,${a*0.8})`;
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  ctx.shadowBlur = 8;
+  ctx.shadowColor = 'rgba(255,0,0,0.5)';
+  [-1,1].forEach(side => {
+    ctx.beginPath();
+    ctx.moveTo(cx + side*grinw, griny);
+    ctx.quadraticCurveTo(cx + side*(grinw + fw*0.08), griny - fh*0.05, cx + side*(grinw + fw*0.05), griny - fh*0.1);
+    ctx.stroke();
+  });
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// SHREK — Green ogre ears, layers
+function drawShrek(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+
+  // Green face
+  const fGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.5);
+  fGrad.addColorStop(0, 'rgba(100,180,50,0.55)');
+  fGrad.addColorStop(0.6, 'rgba(60,130,30,0.4)');
+  fGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = fGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, fw*0.5, fh*0.58, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Big round ears / ear nubs
+  setGlow('rgba(100,180,50,0.6)', 15);
+  ctx.fillStyle = `rgba(90,160,40,${a*0.8})`;
+  [-1,1].forEach(side => {
+    // Ear
+    ctx.beginPath();
+    ctx.ellipse(cx + side*(fw*0.42), cy - fh*0.1, fw*0.14, fw*0.18, side*0.3, 0, Math.PI*2);
+    ctx.fill();
+    // Ear inner
+    ctx.fillStyle = `rgba(80,140,30,${a*0.7})`;
+    ctx.beginPath();
+    ctx.ellipse(cx + side*(fw*0.42), cy - fh*0.1, fw*0.07, fw*0.1, side*0.3, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = `rgba(90,160,40,${a*0.8})`;
+  });
+
+  // Bulbous nose
+  const nGrad = ctx.createRadialGradient(cx, cy+fh*0.07, 0, cx, cy+fh*0.07, fw*0.15);
+  nGrad.addColorStop(0, `rgba(110,190,55,${a*0.8})`);
+  nGrad.addColorStop(1, `rgba(60,120,25,${a*0.4})`);
+  ctx.fillStyle = nGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy+fh*0.07, fw*0.13, fw*0.1, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Eyes
+  drawGlowEyes(cx, cy - fh*0.08, fw, '#88ff00', a, 'round');
+
+  // Unibrow
+  ctx.strokeStyle = `rgba(60,100,20,${a*0.85})`;
+  ctx.lineWidth = fw*0.045;
+  ctx.lineCap = 'round';
+  ctx.shadowBlur = 5;
+  ctx.shadowColor = 'rgba(60,100,20,0.5)';
+  ctx.beginPath();
+  ctx.moveTo(cx - fw*0.28, cy - fh*0.15);
+  ctx.quadraticCurveTo(cx, cy - fh*0.2, cx + fw*0.28, cy - fh*0.15);
+  ctx.stroke();
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// SKULL — X-Ray bone overlay
+function drawSkull(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+  setGlow('rgba(200,220,255,0.7)', 20);
+
+  // Skull glow
+  const sGrad = ctx.createRadialGradient(cx, cy-fh*0.08, 0, cx, cy-fh*0.08, fw*0.47);
+  sGrad.addColorStop(0, 'rgba(180,200,230,0.45)');
+  sGrad.addColorStop(0.7, 'rgba(100,120,160,0.2)');
+  sGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = sGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy-fh*0.08, fw*0.46, fh*0.52, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Eye sockets
+  ctx.fillStyle = `rgba(0,0,0,${a*0.88})`;
+  [-1,1].forEach(side => {
+    ctx.beginPath();
+    ctx.ellipse(cx + side*fw*0.16, cy - fh*0.04, fw*0.12, fh*0.12, 0, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // Nose cavity
+  ctx.fillStyle = `rgba(0,0,0,${a*0.8})`;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy + fh*0.1);
+  ctx.lineTo(cx - fw*0.05, cy + fh*0.18);
+  ctx.lineTo(cx + fw*0.05, cy + fh*0.18);
+  ctx.closePath();
+  ctx.fill();
+
+  // Teeth
+  ctx.fillStyle = `rgba(180,200,230,${a*0.8})`;
+  ctx.strokeStyle = `rgba(100,120,160,${a*0.5})`;
+  ctx.lineWidth = 1;
+  for(let i=0; i<6; i++) {
+    const tx = cx - fw*0.22 + i*(fw*0.44/5);
+    const th = fh*0.1 - (i===0||i===5?fh*0.03:0);
+    ctx.fillRect(tx, cy + fh*0.22, fw*0.065, th);
+    ctx.strokeRect(tx, cy + fh*0.22, fw*0.065, th);
+  }
+
+  // Cracked lines
+  setGlow('rgba(150,180,230,0.6)', 8);
+  ctx.strokeStyle = `rgba(150,180,230,${a*0.5})`;
+  ctx.lineWidth = 1.5;
+  [[cx-fw*0.1, cy-fh*0.35, cx-fw*0.25, cy-fh*0.45, cx-fw*0.15, cy-fh*0.5],
+   [cx+fw*0.05, cy-fh*0.38, cx+fw*0.2, cy-fh*0.42, cx+fw*0.25, cy-fh*0.35]
+  ].forEach(([x1,y1,x2,y2,x3,y3]) => {
+    ctx.beginPath();
+    ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.lineTo(x3,y3);
+    ctx.stroke();
+  });
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// ALIEN — Elongated head, huge black eyes, bioluminescence
+function drawAlien(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+
+  // Elongated alien skull above face
+  const alienGrad = ctx.createRadialGradient(cx, cy - fh*0.2, 0, cx, cy - fh*0.2, fw*0.5);
+  alienGrad.addColorStop(0, 'rgba(0,200,150,0.5)');
+  alienGrad.addColorStop(0.6, 'rgba(0,100,80,0.3)');
+  alienGrad.addColorStop(1, 'transparent');
+  setGlow('rgba(0,255,150,0.8)', 30);
+  ctx.fillStyle = alienGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy - fh*0.18, fw*0.4, fh*0.6, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Veins / neural pathways
+  ctx.strokeStyle = `rgba(0,255,150,${a*0.4})`;
+  ctx.lineWidth = 1.5;
+  for(let i=0; i<5; i++) {
+    const angle = -Math.PI/2 + (i/4)*Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - fh*0.45);
+    ctx.bezierCurveTo(
+      cx + Math.cos(angle)*fw*0.15, cy - fh*0.3,
+      cx + Math.cos(angle)*fw*0.25, cy - fh*0.15,
+      cx + Math.cos(angle)*fw*0.35, cy
+    );
+    ctx.stroke();
+  }
+
+  // Massive black eyes (almond)
+  setGlow('rgba(0,255,200,0.9)', 25);
+  [-1,1].forEach(side => {
+    const ex = cx + side*fw*0.19;
+    const ey = cy - fh*0.02;
+    ctx.fillStyle = `rgba(0,0,0,${a*0.95})`;
+    ctx.beginPath();
+    ctx.ellipse(ex, ey, fw*0.15, fw*0.1, side*0.3, 0, Math.PI*2);
+    ctx.fill();
+    // Blue iris shimmer
+    ctx.fillStyle = `rgba(0,150,255,${a*0.4})`;
+    ctx.beginPath();
+    ctx.ellipse(ex + side*2, ey, fw*0.07, fw*0.045, side*0.3, 0, Math.PI*2);
+    ctx.fill();
+    // Highlight
+    ctx.fillStyle = `rgba(150,255,255,${a*0.3})`;
+    ctx.beginPath();
+    ctx.ellipse(ex + side*fw*0.04, ey - fw*0.03, fw*0.025, fw*0.018, 0, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // Tiny slit mouth
+  ctx.strokeStyle = `rgba(0,255,150,${a*0.6})`;
+  ctx.lineWidth = 2;
+  setGlow('rgba(0,255,150,0.5)', 10);
+  ctx.beginPath();
+  ctx.moveTo(cx - fw*0.07, cy + fh*0.18);
+  ctx.lineTo(cx + fw*0.07, cy + fh*0.18);
+  ctx.stroke();
+
+  // Bioluminescent particles orbiting
+  for(let i=0; i<12; i++) {
+    const angle = (i/12)*Math.PI*2 + t*0.7;
+    const r = fw*0.5 + Math.sin(t*2+i)*fw*0.08;
+    const px = cx + Math.cos(angle)*r;
+    const py = cy - fh*0.1 + Math.sin(angle)*fh*0.4;
+    const ps = 2 + Math.sin(t*3+i)*1.5;
+    ctx.fillStyle = `rgba(0,255,150,${a*(0.3+0.4*Math.sin(t*2+i))})`;
+    setGlow('rgba(0,255,150,0.8)', 8);
+    ctx.beginPath();
+    ctx.arc(px, py, ps, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// PREDATOR — Mandibles, thermal vision overlay, dreadlocks
+function drawPredator(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+
+  // Thermal color overlay
+  const thermalGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.5);
+  thermalGrad.addColorStop(0, 'rgba(255,150,0,0.35)');
+  thermalGrad.addColorStop(0.5, 'rgba(255,50,0,0.2)');
+  thermalGrad.addColorStop(0.8, 'rgba(0,0,200,0.15)');
+  thermalGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = thermalGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, fw*0.5, fh*0.6, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Dreadlocks
+  ctx.strokeStyle = `rgba(80,50,20,${a*0.8})`;
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  for(let i=0; i<8; i++) {
+    const lx = cx - fw*0.45 + i*fw*0.13;
+    const len = fh*0.35 + (i%3)*fh*0.1;
+    ctx.strokeStyle = `rgba(${60+i*10},${40+i*5},20,${a*0.7})`;
+    ctx.beginPath();
+    ctx.moveTo(lx, cy - fh*0.35);
+    ctx.bezierCurveTo(lx + (i-4)*8, cy - fh*0.1, lx+(i-4)*5, cy+fh*0.1, lx+(i-4.5)*12, cy + fh*0.15);
+    ctx.stroke();
+  }
+
+  // Mandibles
+  setGlow('rgba(200,150,0,0.7)', 15);
+  ctx.fillStyle = `rgba(180,120,20,${a*0.85})`;
+  // 4 mandible prongs
+  [[-0.22,-0.15],[-0.08,0.2],[0.08,0.2],[0.22,-0.15]].forEach(([ox,oy],i) => {
+    ctx.beginPath();
+    ctx.ellipse(cx + ox*fw, cy + fh*0.2 + oy*fw, fw*0.04, fw*0.14, (i<2?-0.5:0.5), 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // Eyes (3 spots - triple dot like Predator)
+  setGlow('rgba(255,50,0,0.9)', 20);
+  ctx.fillStyle = `rgba(255,50,0,${a*0.9})`;
+  [-0.12, 0, 0.12].forEach(off => {
+    ctx.beginPath();
+    ctx.arc(cx + off*fw, cy - fh*0.06, fw*0.04, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// CYBORG — Circuit overlay, laser eye, chrome panel
+function drawCyborg(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+
+  // Chrome face panel (right half)
+  setGlow('rgba(0,200,255,0.6)', 20);
+  const panelGrad = ctx.createLinearGradient(cx, cy-fh*0.4, cx+fw*0.5, cy+fh*0.4);
+  panelGrad.addColorStop(0, 'rgba(180,200,220,0.45)');
+  panelGrad.addColorStop(0.5, 'rgba(100,130,160,0.3)');
+  panelGrad.addColorStop(1, 'rgba(60,80,100,0.15)');
+  ctx.fillStyle = panelGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx + fw*0.1, cy, fw*0.42, fh*0.55, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Circuit lines
+  ctx.strokeStyle = `rgba(0,200,255,${a*0.6})`;
+  ctx.lineWidth = 1.5;
+  ctx.shadowColor = 'rgba(0,200,255,0.6)';
+  ctx.shadowBlur = 8;
+  const circuits = [
+    [cx+fw*0.05, cy-fh*0.3, cx+fw*0.3, cy-fh*0.3, cx+fw*0.3, cy-fh*0.1, cx+fw*0.45, cy-fh*0.1],
+    [cx+fw*0.15, cy-fh*0.05, cx+fw*0.35, cy-fh*0.05, cx+fw*0.35, cy+fh*0.1],
+    [cx+fw*0.1, cy+fh*0.15, cx+fw*0.4, cy+fh*0.15, cx+fw*0.4, cy+fh*0.3],
+  ];
+  circuits.forEach(pts => {
+    ctx.beginPath();
+    ctx.moveTo(pts[0],pts[1]);
+    for(let i=2; i<pts.length; i+=2) ctx.lineTo(pts[i],pts[i+1]);
+    ctx.stroke();
+    // Node dots
+    ctx.fillStyle = `rgba(0,200,255,${a*0.9})`;
+    for(let i=0; i<pts.length; i+=2) {
+      ctx.beginPath();
+      ctx.arc(pts[i],pts[i+1],3,0,Math.PI*2);
+      ctx.fill();
+    }
+  });
+
+  // Laser eye (right)
+  setGlow('rgba(255,0,100,1)', 25);
+  ctx.fillStyle = `rgba(255,0,100,${a*0.9})`;
+  ctx.beginPath();
+  ctx.arc(cx + fw*0.18, cy - fh*0.04, fw*0.07, 0, Math.PI*2);
+  ctx.fill();
+
+  // Laser beam shooting
+  const laserLen = (fw + canvas.width) * 0.3;
+  const laserGrad = ctx.createLinearGradient(cx + fw*0.18, cy - fh*0.04, cx + fw*0.18 + laserLen, cy - fh*0.04);
+  laserGrad.addColorStop(0, `rgba(255,0,100,${a*0.9})`);
+  laserGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = laserGrad;
+  ctx.fillRect(cx + fw*0.25, cy - fh*0.055, laserLen, fh*0.03);
+
+  // Normal left eye
+  ctx.fillStyle = `rgba(80,100,130,${a*0.7})`;
+  ctx.shadowBlur = 0;
+  ctx.beginPath();
+  ctx.ellipse(cx - fw*0.17, cy - fh*0.04, fw*0.07, fw*0.06, 0, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(0,0,0,0.8)';
+  ctx.beginPath();
+  ctx.arc(cx - fw*0.17, cy - fh*0.04, fw*0.035, 0, Math.PI*2);
+  ctx.fill();
+
+  // Exposed jaw wires
+  setGlow('rgba(0,200,255,0.5)', 8);
+  ctx.strokeStyle = `rgba(0,200,255,${a*0.5})`;
+  ctx.lineWidth = 2;
+  for(let i=0; i<3; i++) {
+    ctx.beginPath();
+    ctx.moveTo(cx + fw*0.1, cy + fh*0.22);
+    ctx.bezierCurveTo(cx + fw*0.2 + i*fw*0.07, cy + fh*0.28, cx + fw*0.35, cy + fh*0.32, cx + fw*0.4, cy + fh*0.25);
+    ctx.stroke();
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// DEMON — Red skin, horns, hellfire
+function drawDemon(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+
+  // Red face aura
+  const auraGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.55);
+  auraGrad.addColorStop(0, 'rgba(220,0,0,0.5)');
+  auraGrad.addColorStop(0.6, 'rgba(150,0,0,0.3)');
+  auraGrad.addColorStop(1, 'transparent');
+  setGlow('rgba(255,0,0,0.8)', 30);
+  ctx.fillStyle = auraGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, fw*0.52, fh*0.6, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Horns
+  ctx.fillStyle = `rgba(80,0,0,${a*0.9})`;
+  setGlow('rgba(200,0,0,0.8)', 15);
+  [-1,1].forEach(side => {
+    const hx = cx + side*fw*0.28;
+    const hy = cy - fh*0.3;
+    ctx.beginPath();
+    ctx.moveTo(hx, hy);
+    ctx.bezierCurveTo(hx + side*fw*0.05, hy - fh*0.25, hx + side*fw*0.08, hy - fh*0.38, hx + side*fw*0.04, hy - fh*0.5);
+    ctx.lineTo(hx + side*fw*0.1, hy);
+    ctx.closePath();
+    ctx.fill();
+  });
+
+  // Flame eyes
+  setGlow('rgba(255,150,0,1)', 25);
+  [-1,1].forEach(side => {
+    const ex = cx + side*fw*0.17;
+    const ey = cy - fh*0.02;
+    // Eye base
+    ctx.fillStyle = `rgba(255,80,0,${a*0.9})`;
+    ctx.beginPath();
+    ctx.ellipse(ex, ey, fw*0.1, fw*0.08, 0, 0, Math.PI*2);
+    ctx.fill();
+    // Flame flicker
+    for(let f=0; f<3; f++) {
+      const fy = ey - fw*0.05 - Math.sin(t*5+f*2)*fw*0.04;
+      ctx.fillStyle = `rgba(255,${150+f*30},0,${a*(0.5+Math.sin(t*4+f)*0.3)})`;
+      ctx.beginPath();
+      ctx.ellipse(ex + (f-1)*fw*0.03, fy, fw*0.03, fw*0.06, 0, 0, Math.PI*2);
+      ctx.fill();
+    }
+  });
+
+  // Hellfire rising from bottom
+  for(let i=0; i<10; i++) {
+    const fx = cx - fw*0.45 + i*fw*0.1;
+    const fh2 = (30 + i*8) + Math.sin(t*3+i)*15;
+    const opacity = (0.3 + 0.4*Math.sin(t*2+i)) * a;
+    const flameGrad = ctx.createLinearGradient(fx, cy+fh*0.55, fx, cy+fh*0.55-fh2);
+    flameGrad.addColorStop(0, `rgba(255,50,0,${opacity})`);
+    flameGrad.addColorStop(0.5, `rgba(255,150,0,${opacity*0.6})`);
+    flameGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = flameGrad;
+    ctx.beginPath();
+    ctx.ellipse(fx, cy+fh*0.55-fh2*0.5, fw*0.04, fh2*0.5, 0, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// ZOMBIE — Decomposing face, green rot
+function drawZombie(cx, cy, fw, fh, a) {
+  ctx.globalAlpha = a;
+
+  // Deathly pallor
+  const rGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, fw*0.5);
+  rGrad.addColorStop(0, 'rgba(80,150,40,0.4)');
+  rGrad.addColorStop(0.5, 'rgba(40,80,20,0.3)');
+  rGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = rGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, fw*0.5, fh*0.58, 0, 0, Math.PI*2);
+  ctx.fill();
+
+  // Rot marks / decay patches
+  setGlow('rgba(0,100,0,0.4)', 8);
+  ctx.fillStyle = `rgba(20,60,10,${a*0.5})`;
+  [[cx-fw*0.2, cy-fh*0.15, fw*0.12, fw*0.08],
+   [cx+fw*0.15, cy+fh*0.05, fw*0.1, fw*0.07],
+   [cx-fw*0.05, cy+fh*0.2, fw*0.14, fw*0.06]
+  ].forEach(([rx,ry,rw,rh]) => {
+    ctx.beginPath();
+    ctx.ellipse(rx, ry, rw, rh, Math.random()*0.5, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // Drooping eyes (half closed)
+  [-1,1].forEach(side => {
+    const ex = cx + side*fw*0.17;
+    const ey = cy - fh*0.03;
+    ctx.fillStyle = `rgba(200,230,180,${a*0.8})`;
+    ctx.shadowBlur = 5;
+    ctx.shadowColor = 'rgba(0,200,0,0.4)';
+    ctx.beginPath();
+    ctx.ellipse(ex, ey, fw*0.09, fw*0.065, 0, 0, Math.PI*2);
+    ctx.fill();
+    // Blood shot veins
+    ctx.strokeStyle = `rgba(200,0,0,${a*0.5})`;
+    ctx.lineWidth = 1;
+    for(let v=0; v<3; v++) {
+      const va = v/3*Math.PI*2 + side;
+      ctx.beginPath();
+      ctx.moveTo(ex, ey);
+      ctx.lineTo(ex + Math.cos(va)*fw*0.07, ey + Math.sin(va)*fw*0.05);
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(50,0,0,0.9)';
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.ellipse(ex+side*1, ey+2, fw*0.04, fw*0.035, 0, 0, Math.PI*2);
+    ctx.fill();
+  });
+
+  // Exposed teeth / torn mouth
+  setGlow('rgba(200,220,150,0.5)', 8);
+  ctx.fillStyle = `rgba(180,200,130,${a*0.8})`;
+  for(let i=0; i<5; i++) {
+    const tx = cx - fw*0.18 + i*fw*0.09;
+    const tilt = (Math.random()*0.3 - 0.15);
+    ctx.save();
+    ctx.translate(tx, cy + fh*0.2);
+    ctx.rotate(tilt);
+    ctx.fillRect(-fw*0.03, 0, fw*0.055, fh*0.08 * (0.7+Math.random()*0.3));
+    ctx.restore();
+  }
+
+  // Dripping from face
+  ctx.fillStyle = `rgba(0,100,0,${a*0.6})`;
+  for(let i=0; i<3; i++) {
+    const dx = cx - fw*0.15 + i*fw*0.15;
+    const dlen = (fh*0.08 + i*fh*0.04) + Math.sin(t+i)*fh*0.02;
+    ctx.beginPath();
+    ctx.moveTo(dx-3, cy + fh*0.32);
+    ctx.lineTo(dx+3, cy + fh*0.32);
+    ctx.lineTo(dx+2, cy + fh*0.32 + dlen);
+    ctx.lineTo(dx-2, cy + fh*0.32 + dlen);
+    ctx.closePath();
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(dx, cy + fh*0.32 + dlen + 4, 5, 0, Math.PI*2);
+    ctx.fill();
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.shadowBlur = 0;
+}
+
+// Helper: Glow eyes
+function drawGlowEyes(cx, ey, fw, color, a, style='round') {
+  const alpha = a;
+  setGlow(color, 20);
+  [-1,1].forEach(side => {
+    const ex = cx + side*fw*0.17;
+    ctx.fillStyle = color.replace(')', `,${alpha})`).replace('rgb','rgba').replace(/rgba\(([^)]+),([^)]+)\)/,`rgba($1,${alpha})`);
+    // Simpler:
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (style === 'almond') {
+      ctx.ellipse(ex, ey, fw*0.12, fw*0.07, side*0.2, 0, Math.PI*2);
+    } else if (style === 'cat') {
+      ctx.ellipse(ex, ey, fw*0.1, fw*0.12, 0, 0, Math.PI*2);
+    } else {
+      ctx.arc(ex, ey, fw*0.08, 0, Math.PI*2);
+    }
+    ctx.fill();
+    ctx.fillStyle = 'rgba(0,0,0,0.8)';
+    ctx.shadowBlur = 0;
+    ctx.beginPath();
+    ctx.arc(ex + side*2, ey, fw*0.04, 0, Math.PI*2);
+    ctx.fill();
+  });
+}
+
+// Helper: Triangle (eye shape for pumpkin)
+function drawTriangle(cx, cy, w, h) {
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - h);
+  ctx.lineTo(cx + w, cy + h);
+  ctx.lineTo(cx - w, cy + h);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Helper: Star
+function drawStar(cx, cy, outerR, innerR, color, a) {
+  ctx.globalAlpha = a;
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  for(let i=0; i<10; i++) {
+    const angle = (i/10)*Math.PI*2 - Math.PI/2;
+    const r = i%2===0 ? outerR : innerR;
+    if(i===0) ctx.moveTo(cx + Math.cos(angle)*r, cy + Math.sin(angle)*r);
+    else ctx.lineTo(cx + Math.cos(angle)*r, cy + Math.sin(angle)*r);
+  }
+  ctx.closePath();
+  ctx.fill();
+}
+
+// Animate stats when active
+setInterval(() => {
+  if (!cameraActive) return;
+  const now = new Date();
+  // Subtle shimmer on bars when active
+  if (currentEffect) {
+    const ef = effects[currentEffect];
+    const flicker = 1 + (Math.random()-0.5)*0.05;
+    document.getElementById('threatBar').style.width = (ef.threat * flicker) + '%';
+    document.getElementById('alienBar').style.width = (ef.alien * flicker) + '%';
+    document.getElementById('magicBar').style.width = (ef.magic * flicker) + '%';
+  }
+}, 200);
+</script>
+</body>
+</html>
